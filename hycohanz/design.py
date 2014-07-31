@@ -24,6 +24,7 @@ def get_module(oDesign, ModuleName):
             - "Solutions"
             - "FieldsReporter"
             - "RadField"
+            - "ReportSetup"
             - "UserDefinedSolutionModule"
         
     Returns

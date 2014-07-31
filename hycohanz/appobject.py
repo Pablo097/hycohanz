@@ -23,7 +23,7 @@ def setup_interface():
     
     Examples
     --------
-    >>> import Hyphasis as hfss
+    >>> import hycohanz as hfss
     >>> [oAnsoftApp, oDesktop] = hfss.setup_interface()
     
     """
