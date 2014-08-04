@@ -3,11 +3,12 @@
 Functions in this module correspond more or less to the functions described 
 in the HFSS Scripting Guide, Section "Analysis Setup Module Script Commands"
 
-At last count there were 2 functions implemented out of 20.
+At last count there were 4 functions implemented out of 20.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 from hycohanz.design import get_module
+
 
 def insert_frequency_sweep(oDesign,
                            setupname,
@@ -73,6 +74,7 @@ def insert_frequency_sweep(oDesign,
                                          "SaveFields:=", SaveFields, 
                                          "ExtrapToDC:=", ExtrapToDC])
 
+
 def insert_analysis_setup(oDesign, 
                           Frequency,
                           PortsOnly=True,
@@ -96,7 +98,7 @@ def insert_analysis_setup(oDesign,
                           SetPortMinMaxTri=False,
                           EnableSolverDomains=False,
                           ThermalFeedback=False,
-                          NoAdditionalRefinementOnImport=False):
+                          hNoAdditionalRefinementOnImport=False):
     """
     Insert an HFSS analysis setup.
     """
@@ -128,3 +130,37 @@ def insert_analysis_setup(oDesign,
                                 
     return Name
 
+
+def get_setups(design):
+    """
+    Gets the names of analysis setups in a design.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design object upon which to operate.
+
+    Returns
+    -------
+    reportnames : list of str
+        A list with the names of all the analysis setups in the Design
+    """
+    module = get_module(design, "AnalysisSetup")
+    setup_list = list(module.GetSetups())
+    return map(str, setup_list)
+
+
+def get_sweeps(design, setup_name):
+    """
+    Gets the names of all sweeps in a given analysis setup.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design object upon which to operate.
+    SweepName : str
+        Name of HFSS sweep to use, for example "LastAdaptive"
+    """
+    module = get_module(design, "AnalysisSetup")
+    sweep_list = list(module.GetSweeps(setup_name))
+    return map(str, sweep_list)

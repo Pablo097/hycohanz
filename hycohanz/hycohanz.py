@@ -47,7 +47,9 @@ from hycohanz.material import ( add_material,
                                 )
 
 from hycohanz.analysis_setup import (insert_frequency_sweep,
-                                     insert_analysis_setup)
+                                     insert_analysis_setup,
+                                     get_setups,
+                                     get_sweeps)
 
 from hycohanz.boundarysetup import (assign_perfect_e,
                                     assign_radiation,
@@ -61,7 +63,10 @@ from hycohanz.fieldscalculator import (enter_vol,
                                        get_top_entry_value)
 
 from hycohanz.reporter import  (export_to_file,
-                                get_all_report_names)
+                                get_all_report_names,
+                                create_report,
+                                add_traces,
+                                rename_trace)
 
 class App():
     """
