@@ -204,17 +204,21 @@ def assign_waveport_intline(oDesign,
         DoDeembed = True
 
     # For some reason, HFSS does not accept integration line coordinates
-    # in the common HFSS expression form, so the expression needs to be
-    # evaluated before feeding it to the program, making it cumbersome
+    # in the common HFSS expression form nor without units, so the expression
+    # needs to be evaluated before feeding it to the program
     for i in range(3):
         units = re.search(r'[a-zA-Z]+', Ex(startCoord[i]).expr)
         startCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(startCoord[i]).expr)))
         if units != None:
             startCoord[i] = startCoord[i] + units[0]
+        else:
+            startCoord[i] = startCoord[i] + "meter"
         units = re.search(r'[a-zA-Z]+', Ex(stopCoord[i]).expr)
         stopCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(stopCoord[i]).expr)))
         if units != None:
             stopCoord[i] = stopCoord[i] + units[0]
+        else:
+            stopCoord[i] = stopCoord[i] + "meter"
 
     oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
     modesarray = ["NAME:Modes"]
@@ -252,7 +256,7 @@ def assign_lumpedport_intline(oDesign,
                               DeembedDistance=0,
                               AlignmentGroup=0,
                               CharImp="Zpi",
-                              RenormImp="50ohm",
+                              Impedance="50ohm",
                               ShowReporterFilter=False,
                               ReporterFilter=[True]):
     """
@@ -280,18 +284,30 @@ def assign_lumpedport_intline(oDesign,
     else:
         DoDeembed = True
 
+    # Debuaging
+    # print([Ex(startCoord[0]).expr, Ex(startCoord[1]).expr, Ex(startCoord[2]).expr])
+    # print([Ex(stopCoord[0]).expr, Ex(stopCoord[1]).expr, Ex(stopCoord[2]).expr])
+
     # For some reason, HFSS does not accept integration line coordinates
-    # in the common HFSS expression form, so the expression needs to be
-    # evaluated before feeding it to the program, making it cumbersome
+    # in the common HFSS expression form nor without units, so the expression
+    # needs to be evaluated before feeding it to the program
     for i in range(3):
         units = re.search(r'[a-zA-Z]+', Ex(startCoord[i]).expr)
         startCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(startCoord[i]).expr)))
         if units != None:
             startCoord[i] = startCoord[i] + units[0]
+        else:
+            startCoord[i] = startCoord[i] + "meter"
         units = re.search(r'[a-zA-Z]+', Ex(stopCoord[i]).expr)
         stopCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(stopCoord[i]).expr)))
         if units != None:
             stopCoord[i] = stopCoord[i] + units[0]
+        else:
+            stopCoord[i] = stopCoord[i] + "meter"
+
+    # Debuaging
+    # print([Ex(startCoord[0]).expr, Ex(startCoord[1]).expr, Ex(startCoord[2]).expr])
+    # print([Ex(stopCoord[0]).expr, Ex(stopCoord[1]).expr, Ex(stopCoord[2]).expr])
 
     oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
     modesarray = ["NAME:Modes"]
@@ -305,7 +321,7 @@ def assign_lumpedport_intline(oDesign,
                         ],
                         "AlignmentGroup:=", AlignmentGroup,
 					    "CharImp:=", CharImp,
-                        "RenormImp:=", RenormImp])
+                        "RenormImp:=", Impedance])
 
     lumpedportarray = ["NAME:" + portname,
                      "Faces:=", faceidlist,
@@ -315,6 +331,6 @@ def assign_lumpedport_intline(oDesign,
                      modesarray,
                      "ShowReporterFilter:=", ShowReporterFilter,
                      "ReporterFilter:=", ReporterFilter,
-                     "Impedance:=", RenormImp]
+                     "Impedance:=", Impedance]
 
     oBoundarySetupModule.AssignLumpedPort(lumpedportarray)

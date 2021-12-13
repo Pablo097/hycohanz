@@ -148,7 +148,6 @@ def create_rectangle(   oEditor,
 
     return oEditor.CreateRectangle(RectangleParameters, Attributes)
 
-
 def create_EQbasedcurve(   oEditor,
                         xt,
                         yt,
@@ -863,7 +862,8 @@ def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
 
     Returns
     -------
-    None
+    selectionlist : list
+        List with the original and duplicated parts names
     """
     selectionsarray = ["NAME:Selections",
                        "Selections:=", ','.join(partlist),
@@ -876,7 +876,7 @@ def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
                             "ZComponent:="      , Ex(z).expr,
                             "NumClones:="       , Ex(clonesNumber).expr]
 
-    oEditor.DuplicateAlongLine(selectionsarray, duplicateparamsarray,
+    objectName = oEditor.DuplicateAlongLine(selectionsarray, duplicateparamsarray,
         [
             "NAME:Options",
             "DuplicateAssignments:=", True
@@ -884,6 +884,108 @@ def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
         [
             "CreateGroupsForNewObjects:=", CreateGroupsForNewObjectsFlag
         ])
+
+    return partlist + list(objectName)
+
+def duplicate_around_axis(oEditor, partlist, angle, clonesNumber, axis="Z",
+                        CreateNewObjectsFlag=False, CreateGroupsForNewObjectsFlag=False):
+    """
+    Duplicates specified parts around a given axis.
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    partlist : list
+        List of part name strings to be mirrored.
+    axis : str
+        Rotation axis.
+    angle : float or hycohanz Expression object
+        Rotation angle in radians
+    clonesNumber : int or hycohanz Expression object
+        Number of duplicated clones, including the original objects
+    CreateNewObjectsFlag : boolean
+        Tells whether to create new objects for each duplicated one
+        or keep all the clones and original as only one object
+
+    Returns
+    -------
+    selectionlist : list
+        List with the original and duplicated parts names
+    """
+    selectionsarray = ["NAME:Selections",
+                       "Selections:=", ','.join(partlist),
+                       "NewPartsModelFlag:=", "Model"]
+
+    duplicateparamsarray = ["NAME:DuplicateAroundAxisParameters",
+                            "CreateNewObjects:="    , CreateNewObjectsFlag,
+                            "WhichAxis:="      , axis,
+                            "AngleStr:="        , Ex(angle).expr,
+                            "NumClones:="       , Ex(clonesNumber).expr]
+
+    objectName = oEditor.DuplicateAroundAxis(selectionsarray, duplicateparamsarray,
+        [
+            "NAME:Options",
+            "DuplicateAssignments:=", True
+        ],
+        [
+            "CreateGroupsForNewObjects:=", CreateGroupsForNewObjectsFlag
+        ])
+
+    return partlist + list(objectName)
+
+def duplicate_mirror(oEditor, partlist, base, normal, CreateGroupsForNewObjectsFlag=False):
+    """
+    Duplicate-mirror specified parts about a given base point with respect
+    to a given plane.
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    partlist : list
+        List of part name strings to be duplicate-mirrored.
+    base : list
+        Mirror base point in Cartesian coordinates.
+    normal : list
+        Mirror plane normal in Cartesian coordinates.
+
+    Returns
+    -------
+    selectionlist : list
+        List with the original and duplicated parts names
+    """
+    # # For some reason, in the mirrorparamsarray, HFSS does not
+    # # accept numeric-only values, so the units are required.
+    # for n in range(3):
+    #     if isinstance(base[n], (float, int)):
+    #         base[n] = str(base[n]) + "meter"
+    #     if isinstance(normal[n], (float, int)):
+    #         normal[n] = str(normal[n]) + "meter"
+    # # INDEED, IT WORKS FINE. The above is not necessary
+
+    selectionsarray = ["NAME:Selections",
+                       "Selections:=", ','.join(partlist),
+                       "NewPartsModelFlag:=", "Model"]
+
+    mirrorparamsarray = ["NAME:DuplicateToMirrorParameters",
+                         "DuplicateMirrorBaseX:=", Ex(base[0]).expr,
+                         "DuplicateMirrorBaseY:=", Ex(base[1]).expr,
+                         "DuplicateMirrorBaseZ:=", Ex(base[2]).expr,
+                         "DuplicateMirrorNormalX:=", Ex(normal[0]).expr,
+                         "DuplicateMirrorNormalY:=", Ex(normal[1]).expr,
+                         "DuplicateMirrorNormalZ:=", Ex(normal[2]).expr]
+
+    objectName = oEditor.DuplicateMirror(selectionsarray, mirrorparamsarray,
+        [
+            "NAME:Options",
+            "DuplicateAssignments:=", True
+        ],
+        [
+            "CreateGroupsForNewObjects:=", CreateGroupsForNewObjectsFlag
+        ])
+
+    return partlist + list(objectName)
 
 def mirror(oEditor, partlist, base, normal):
     """
@@ -919,6 +1021,8 @@ def mirror(oEditor, partlist, base, normal):
 
     oEditor.Mirror(selectionsarray, mirrorparamsarray)
 
+    return get_selections(oEditor)
+
 def sweep_along_vector(oEditor, obj_name_list, x, y, z):
     """
     Sweeps the specified 1D or 2D parts along a vector.
@@ -938,7 +1042,8 @@ def sweep_along_vector(oEditor, obj_name_list, x, y, z):
 
     Returns
     -------
-    None
+    selectionlist : list
+        List of the scaled parts names
     """
     selections = ", ".join(obj_name_list)
 
@@ -1307,7 +1412,6 @@ def delete(oEditor, partlist):
                        "Selections:=", ','.join(partlist)]
 
     return oEditor.Delete(selectionsarray)
-
 
 def split(oEditor, partlist,
           NewPartsModelFlag="Model",

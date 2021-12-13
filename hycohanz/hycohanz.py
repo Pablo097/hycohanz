@@ -29,16 +29,14 @@ from hycohanz.desktop import (quit_application,
                               close_current_project,
                               get_projects,
                               close_all_projects,
-                              close_all_projects_except_current)
+                              close_all_projects_except_current,
+                              save_as_project)
 
 from hycohanz.project import *
 
-from hycohanz.property import ( add_property,
-                                set_variable,
-                                )
+from hycohanz.property import *
 
-from hycohanz.design import (get_module,
-                             set_active_editor)
+from hycohanz.design import *
 
 from hycohanz.expression import Expression
 from hycohanz.modeler3d import *

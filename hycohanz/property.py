@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-HFSS functions that use the Property module. Functions in this module correspond 
-more or less to the functions described in the HFSS Scripting Guide, 
+HFSS functions that use the Property module. Functions in this module correspond
+more or less to the functions described in the HFSS Scripting Guide,
 Section "Property Script Commands".
 
 At last count there were 1 functions implemented out of 7.
@@ -13,7 +13,7 @@ from hycohanz.expression import Expression
 def add_property(oDesign, name, value):
     """
     Add a design property.
-    
+
     Parameters
     ----------
     oDesign : pywin32 COMObject
@@ -22,30 +22,30 @@ def add_property(oDesign, name, value):
         The name of the property to add.
     value : Hyphasis Expression object
         The value of the property.
-        
+
     Returns
     -------
     None
-    
+
     """
     propserversarray = ["NAME:PropServers", "LocalVariables"]
 
-    newpropsarray = ["NAME:NewProps", ["NAME:" + name, 
-                                       "PropType:=", "VariableProp", 
-                                       "UserDef:=", True, 
+    newpropsarray = ["NAME:NewProps", ["NAME:" + name,
+                                       "PropType:=", "VariableProp",
+                                       "UserDef:=", True,
                                        "Value:=", Expression(value).expr]]
-    
+
     proptabarray = ["NAME:LocalVariableTab", propserversarray, newpropsarray]
-          
+
     oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
 
 def set_variable(oProject, name, value):
     """
-    Change a design property.  This function differs significantly from 
-    SetVariableValue() in that it makes the reasonable assumption that 
-    if the variable contains '$', then the variable is global; otherwise, 
+    Change a design property.  This function differs significantly from
+    SetVariableValue() in that it makes the reasonable assumption that
+    if the variable contains '$', then the variable is global; otherwise,
     it is assumed to be a local variable.
-    
+
     Parameters
     ----------
     oProject : pywin32 COMObject
@@ -54,13 +54,13 @@ def set_variable(oProject, name, value):
         The name of the property/variable to edit.
     value : Hyphasis Expression object
         The new value of the property.
-        
+
     Returns
     -------
     None
-    
+
     """
-    if '$' in name: 
+    if '$' in name:
         oProject.SetVariableValue(name,Expression(value).expr)
     else:
         oDesign = oProject.GetActiveDesign()
@@ -69,7 +69,7 @@ def set_variable(oProject, name, value):
 def get_variables(oProject,oDesign=''):
     """
     get list of non-indexed variables.
-    
+
     Parameters
     ----------
     oProject : pywin32 COMObject
@@ -77,12 +77,12 @@ def get_variables(oProject,oDesign=''):
     oDesign : pywin32 COMObject
         Optional, if specified function returns variable list of oDesign.
 
-        
+
     Returns
     -------
     variable_list: list of str
     list of non-indexed project/design variables
-    
+
     """
     if oDesign=='':
         variable_list = list(oProject.GetVariables())
@@ -90,4 +90,21 @@ def get_variables(oProject,oDesign=''):
         variable_list = list(oDesign.GetVariables())
     return map(str,variable_list)
 
+def get_variable_value(oDesign,varName):
+    """
+    get the value of a variable.
 
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design from which to retrieve the variable.
+    varName : str
+        string with the name of the variable
+
+    Returns
+    -------
+    variable_value: str
+    string representing the value of the variable
+
+    """
+    return oDesign.GetVariableValue(varName)
