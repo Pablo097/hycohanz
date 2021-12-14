@@ -9,6 +9,46 @@ At last count there were 1 functions implemented out of 7.
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 from hycohanz.expression import Expression
+import re
+import math
+from quantiphy import Quantity
+
+def add_properties(oDesign, name, value):
+    """
+    Add design properties.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design from which to retrieve the module.
+    name : list of str
+        The name of the properties to add.
+    value : list of Hyphasis Expression object
+        The values of the properties.
+
+    Returns
+    -------
+    None
+
+    """
+    propserversarray = ["NAME:PropServers", "LocalVariables"]
+
+    newpropsarray = ["NAME:NewProps"]
+
+    for n in range(len(name)):
+        if isinstance(value[n], list):
+            valueAux = '['+','.join([Expression(i).expr for i in value[n]])+']'
+        else:
+            valueAux = Expression(value[n]).expr
+
+        newpropsarray.append(["NAME:" + name[n],
+                           "PropType:=", "VariableProp",
+                           "UserDef:=", True,
+                           "Value:=", valueAux])
+
+    proptabarray = ["NAME:LocalVariableTab", propserversarray, newpropsarray]
+
+    oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
 
 def add_property(oDesign, name, value):
     """
@@ -28,16 +68,7 @@ def add_property(oDesign, name, value):
     None
 
     """
-    propserversarray = ["NAME:PropServers", "LocalVariables"]
-
-    newpropsarray = ["NAME:NewProps", ["NAME:" + name,
-                                       "PropType:=", "VariableProp",
-                                       "UserDef:=", True,
-                                       "Value:=", Expression(value).expr]]
-
-    proptabarray = ["NAME:LocalVariableTab", propserversarray, newpropsarray]
-
-    oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
+    add_properties(oDesign, [name], [value])
 
 def set_variable(oProject, name, value):
     """
@@ -107,4 +138,89 @@ def get_variable_value(oDesign,varName):
     string representing the value of the variable
 
     """
-    return oDesign.GetVariableValue(varName)
+    return oDesign.GetVariableValue(Expression(varName).expr)
+
+def expand_expression(oDesign, exprValue):
+    """
+    Expands an expression with all the numeric values and
+    their units from HFSS variables
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design from which to retrieve the variable values.
+    exprValue : int, float, str or hycohanz Expression object
+        expression to expand
+
+    Returns
+    -------
+    str1: str
+        string representing the expression expanded as numbers and units only
+
+    Example Usage
+    -------------
+    # Assume the HFSS oDesign has the following variables declared in the project
+    # > varA = 18um
+    # > varB = 4GHz
+    # > varC = c0/varB + varA
+    >>> expand_expression(oDesign, 'varC')
+    '299792458.0/4GHz + 18um'
+    """
+    str1 = Expression(exprValue).expr
+    # print('Expresion a sustituir: '+str1)
+    variablelist = re.findall(r'\b[a-zA-Z]\w*', str1)
+    # print(variablelist)
+    if len(variablelist) > 0:
+    	for variable in variablelist:
+    		# print('Variable a sustituir: '+variable)
+            if variable=="c0":
+                str1 = str1.replace(variable, str(float(Quantity('c'))))
+            elif variable=="e0":
+                str1 = str1.replace(variable, str(float(Quantity('eps0'))))
+            elif variable=="u0":
+                str1 = str1.replace(variable, str(float(Quantity('mu0'))))
+            elif variable=="pi":
+                str1 = str1.replace(variable, str(math.pi))
+            else:
+                str2 = get_variable_value(oDesign, variable)
+                # print('De HFSS se obtiene que esta variable se expande a: '+str2)
+                str1 = str1.replace(variable, expand_expression(oDesign, str2))
+    # print('String ya sustituido: '+str1)
+    return str1
+
+def eval_expression(oDesign, exprValue):
+    """
+    Evaluates an expression taking the necessary HFSS design variables
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design from which to retrieve the possible variable values.
+    exprValue : int, float, str or hycohanz Expression object
+        expression to evaluate
+
+    Returns
+    -------
+    value: float
+        evaluated value in SI units
+
+    Example Usage
+    -------------
+    # Assume the HFSS oDesign has the following variables declared in the project
+    # > varA = 18um
+    # > varB = 4GHz
+    # > varC = c0/varB + varA
+    >>> expand_expression(oDesign, 'varC')
+    0.0749661145
+    """
+    str1 = expand_expression(oDesign, exprValue)
+    # print(str1)
+    for variableWithUnits in list(set(re.findall(r'\b[\d]+\.?[\d]*[A-Za-z]+', str1))):
+        # print(variableWithUnits)
+        if 'mil' in variableWithUnits:	# Catch non-standard units:
+            aux = variableWithUnits.replace('mil','')
+            str1 = str1.replace(variableWithUnits, str(float(aux)*2.54e-5))
+        else:
+            str1 = str1.replace(variableWithUnits, str(float(Quantity(variableWithUnits))))
+        # print(str1)
+    return eval(str1)

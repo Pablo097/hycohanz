@@ -126,6 +126,15 @@ design.  Please use from __future__ import division in the calling code.""")
         """
         return Expression('-(' + self.expr + ')')
 
+    def __getitem__(self, key):
+        """
+        Overloads the getitem ([]) operator
+        """
+        if isinstance(key, Expression):
+            return Expression(self.expr + '[' + str(key.expr) + ']')
+        else:
+            return Expression(self.expr + '[' + str(key) + ']')
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

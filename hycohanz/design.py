@@ -83,6 +83,45 @@ def set_active_editor(oDesign, editorname="3D Modeler"):
 
     return oEditor
 
+def insert_infinite_sphere(oDesign,
+                    name = 'Infinite Sphere 1',
+                    thetaArray = [0, 180, 2],
+                    phiArray = [-180, 180, 2],
+                    UseCustomRadSurface = False,
+                    Polarization = 'Linear',
+                    UseLocalCS = False):
+    """
+    Creates an infinite sphere setup
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design object upon which to operate.
+    thetaArray : list of int
+    phiArray : list of int
+        List with [start, stop, step] of theta and phi in (deg)
+
+    Returns
+    -------
+    None
+    """
+    oModule = get_module(oDesign, "RadField")
+    oModule.InsertInfiniteSphereSetup(
+    	[
+    		"NAME:"+name,
+    		"UseCustomRadiationSurface:=", UseCustomRadSurface,
+    		"CSDefinition:="	, "Theta-Phi",
+    		"Polarization:="	, Polarization,
+    		"ThetaStart:="		, str(thetaArray[0])+"deg",
+    		"ThetaStop:="		, str(thetaArray[1])+"deg",
+    		"ThetaStep:="		, str(thetaArray[2])+"deg",
+    		"PhiStart:="		, str(phiArray[0])+"deg",
+    		"PhiStop:="		, str(phiArray[1])+"deg",
+    		"PhiStep:="		, str(phiArray[2])+"deg",
+    		"UseLocalCS:="		, UseLocalCS
+    	])
+    return
+
 def solve(oDesign,setup_name_list):
     """
     Solve Setup.

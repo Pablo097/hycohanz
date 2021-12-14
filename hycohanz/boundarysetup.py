@@ -10,6 +10,7 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import re
 
 from hycohanz.design import get_module
+from hycohanz.property import eval_expression
 from hycohanz.expression import Expression as Ex
 
 def assign_perfect_e(oDesign, boundaryname, facelist, InfGroundPlane=False):
@@ -111,6 +112,47 @@ def assign_perfect_h(oDesign, boundaryname, facelist):
     oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
     oBoundarySetupModule.AssignPerfectH(["Name:" + boundaryname, "Faces:=", facelist])
 
+def assign_anisotropic_impedance(oDesign,
+                                faceList,
+                                resistanceArray,
+                                reactanceArray,
+                                boundaryName = "AnisoImp1",
+                                UseInfiniteGP = False):
+    """
+    Create an anisotropic impedance boundary.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design to which this function is applied.
+    faceList : list of ints
+        The faces to assign this boundary condition.
+    resistanceArray : list of floats and/or hycohanz Expression objects
+    reactanceArray : list of floats and/or hycohanz Expression objects
+        Lists with the anisotropic resistance and reactance values
+        ordered as [Zxx, Zxy, Zyx, Zyy]
+
+    Returns
+    -------
+    None
+    """
+    oModule = get_module(oDesign, "BoundarySetup")
+
+    anisImpArray = ["NAME:"+boundaryName,
+                    "Faces:="		, faceList,
+                    "UseInfiniteGroundPlane:=", False,
+                    "CoordSystem:="		, "Global",
+                    "HasExternalLink:="	, False,
+                    "ZxxResistance:="	, Ex(resistanceArray[0]).expr,
+                    "ZxxReactance:="	, Ex(reactanceArray[0]).expr,
+                    "ZxyResistance:="	, Ex(resistanceArray[1]).expr,
+                    "ZxyReactance:="	, Ex(reactanceArray[1]).expr,
+                    "ZyxResistance:="	, Ex(resistanceArray[2]).expr,
+                    "ZyxReactance:="	, Ex(reactanceArray[2]).expr,
+                    "ZyyResistance:="	, Ex(resistanceArray[3]).expr,
+                    "ZyyReactance:="	, Ex(reactanceArray[3]).expr]
+    oModule.AssignAnisotropicImpedance(anisImpArray)
+
 def assign_waveport_multimode(oDesign,
                               faceidlist,
                               portname="WP1",
@@ -206,19 +248,23 @@ def assign_waveport_intline(oDesign,
     # For some reason, HFSS does not accept integration line coordinates
     # in the common HFSS expression form nor without units, so the expression
     # needs to be evaluated before feeding it to the program
-    for i in range(3):
-        units = re.search(r'[a-zA-Z]+', Ex(startCoord[i]).expr)
-        startCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(startCoord[i]).expr)))
-        if units != None:
-            startCoord[i] = startCoord[i] + units[0]
-        else:
-            startCoord[i] = startCoord[i] + "meter"
-        units = re.search(r'[a-zA-Z]+', Ex(stopCoord[i]).expr)
-        stopCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(stopCoord[i]).expr)))
-        if units != None:
-            stopCoord[i] = stopCoord[i] + units[0]
-        else:
-            stopCoord[i] = stopCoord[i] + "meter"
+    startCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoord]
+    stopCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in stopCoord]
+
+    ## Old method
+    # for i in range(3):
+    #     units = re.search(r'[a-zA-Z]+', Ex(startCoord[i]).expr)
+    #     startCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(startCoord[i]).expr)))
+    #     if units != None:
+    #         startCoord[i] = startCoord[i] + units[0]
+    #     else:
+    #         startCoord[i] = startCoord[i] + "meter"
+    #     units = re.search(r'[a-zA-Z]+', Ex(stopCoord[i]).expr)
+    #     stopCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(stopCoord[i]).expr)))
+    #     if units != None:
+    #         stopCoord[i] = stopCoord[i] + units[0]
+    #     else:
+    #         stopCoord[i] = stopCoord[i] + "meter"
 
     oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
     modesarray = ["NAME:Modes"]
@@ -291,19 +337,23 @@ def assign_lumpedport_intline(oDesign,
     # For some reason, HFSS does not accept integration line coordinates
     # in the common HFSS expression form nor without units, so the expression
     # needs to be evaluated before feeding it to the program
-    for i in range(3):
-        units = re.search(r'[a-zA-Z]+', Ex(startCoord[i]).expr)
-        startCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(startCoord[i]).expr)))
-        if units != None:
-            startCoord[i] = startCoord[i] + units[0]
-        else:
-            startCoord[i] = startCoord[i] + "meter"
-        units = re.search(r'[a-zA-Z]+', Ex(stopCoord[i]).expr)
-        stopCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(stopCoord[i]).expr)))
-        if units != None:
-            stopCoord[i] = stopCoord[i] + units[0]
-        else:
-            stopCoord[i] = stopCoord[i] + "meter"
+    startCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoord]
+    stopCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in stopCoord]
+
+    ## Old method
+    # for i in range(3):
+    #     units = re.search(r'[a-zA-Z]+', Ex(startCoord[i]).expr)
+    #     startCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(startCoord[i]).expr)))
+    #     if units != None:
+    #         startCoord[i] = startCoord[i] + units[0]
+    #     else:
+    #         startCoord[i] = startCoord[i] + "meter"
+    #     units = re.search(r'[a-zA-Z]+', Ex(stopCoord[i]).expr)
+    #     stopCoord[i] = str(eval(re.sub("[a-zA-Z]+", "", Ex(stopCoord[i]).expr)))
+    #     if units != None:
+    #         stopCoord[i] = stopCoord[i] + units[0]
+    #     else:
+    #         stopCoord[i] = stopCoord[i] + "meter"
 
     # Debuaging
     # print([Ex(startCoord[0]).expr, Ex(startCoord[1]).expr, Ex(startCoord[2]).expr])

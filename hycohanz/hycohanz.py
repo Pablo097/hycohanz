@@ -47,12 +47,7 @@ from hycohanz.material import ( add_material,
 from hycohanz.analysis_setup import (insert_frequency_sweep,
                                      insert_analysis_setup)
 
-from hycohanz.boundarysetup import (assign_perfect_e,
-                                    assign_radiation,
-                                    assign_perfect_h,
-                                    assign_waveport_multimode,
-                                    assign_waveport_intline,
-                                    assign_lumpedport_intline)
+from hycohanz.boundarysetup import *
 
 from hycohanz.fieldscalculator import (enter_vol,
                                        calc_op,

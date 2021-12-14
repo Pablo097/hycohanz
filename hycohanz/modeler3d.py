@@ -91,7 +91,7 @@ def create_rectangle(   oEditor,
     xs : float or hycohanz Expression object
     ys : float or hycohanz Expression object
     zs : float or hycohanz Expression object
-        The x, y, and z coordinates of the center of the circle.
+        The x, y, and z coordinates of the start of the rectangle.
     width : float or hycohanz Expression object
         x-dimension of the rectangle
     height : float or hycohanz Expression object
