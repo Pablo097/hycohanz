@@ -11,10 +11,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import warnings
 
+import hycohanz.conf as conf
 from hycohanz.expression import Expression as Ex
 
 warnings.simplefilter('default')
 
+@conf.checkDefaultEditor
 def get_matched_object_name(oEditor, name_filter="*"):
     """
     Returns a list of objects that match the input filter.
@@ -37,6 +39,7 @@ def get_matched_object_name(oEditor, name_filter="*"):
 
     return list(selections)
 
+@conf.checkDefaultEditor
 def assign_material(oEditor, partlist, MaterialName="vacuum", SolveInside=True):
     """
     Assign a material to the specified objects. Only the MaterialName and
@@ -65,6 +68,7 @@ def assign_material(oEditor, partlist, MaterialName="vacuum", SolveInside=True):
 
     oEditor.AssignMaterial(selectionsarray, attributesarray)
 
+@conf.checkDefaultEditor
 def create_rectangle(   oEditor,
                         xs,
                         ys,
@@ -148,6 +152,7 @@ def create_rectangle(   oEditor,
 
     return oEditor.CreateRectangle(RectangleParameters, Attributes)
 
+@conf.checkDefaultEditor
 def create_EQbasedcurve(   oEditor,
                         xt,
                         yt,
@@ -225,6 +230,7 @@ def create_EQbasedcurve(   oEditor,
 
     return oEditor.CreateEquationCurve(EquationCurveParameters, Attributes)
 
+@conf.checkDefaultEditor
 def create_circle(oEditor, xc, yc, zc, radius,
                   WhichAxis='Z',
                   NumSegments=0,
@@ -298,6 +304,7 @@ def create_circle(oEditor, xc, yc, zc, radius,
 
     return oEditor.CreateCircle(circleparams, attributesarray)
 
+@conf.checkDefaultEditor
 def create_cylinder(oEditor, xc, yc, zc, radius, height,
                   WhichAxis='Z',
                   NumSides=0,
@@ -379,6 +386,7 @@ def create_cylinder(oEditor, xc, yc, zc, radius, height,
 
     return oEditor.CreateCylinder(cylinderparams, attributesarray)
 
+@conf.checkDefaultEditor
 def create_sphere(oEditor, x, y, z, radius,
                   Name="Sphere1",
                   Flags="",
@@ -451,6 +459,7 @@ def create_sphere(oEditor, x, y, z, radius,
 
     return part
 
+@conf.checkDefaultEditor
 def create_box( oEditor,
                 xpos,
                 ypos,
@@ -534,6 +543,7 @@ def create_box( oEditor,
 
     return oEditor.CreateBox(BoxParameters, Attributes)
 
+@conf.checkDefaultEditor
 def create_polyline(oEditor, x, y, z, Name="Polyline1",
                                 Flags="",
                                 Color="(132 132 193)",
@@ -720,6 +730,7 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
 
     return polyname
 
+@conf.checkDefaultEditor
 def get_selections(oEditor):
     """
     Get a list of the currently-selected objects in the design.
@@ -736,6 +747,7 @@ def get_selections(oEditor):
     """
     return oEditor.GetSelections()
 
+@conf.checkDefaultEditor
 def move(oEditor, partlist, x, y, z, NewPartsModelFlag="Model"):
     """
     Move specified parts.
@@ -768,6 +780,7 @@ def move(oEditor, partlist, x, y, z, NewPartsModelFlag="Model"):
 
     oEditor.Move(selectionsarray, moveparametersarray)
 
+@conf.checkDefaultEditor
 def get_object_name(oEditor, index):
     """
     Return the object name corresponding to the zero-based creation-order index.
@@ -776,6 +789,7 @@ def get_object_name(oEditor, index):
     """
     return oEditor.GetObjectName(index)
 
+@conf.checkDefaultEditor
 def copy(oEditor, partlist):
     """
     Copy specified parts to the clipboard.
@@ -797,6 +811,7 @@ def copy(oEditor, partlist):
 
     oEditor.Copy(selectionsarray)
 
+@conf.checkDefaultEditor
 def get_object_id_by_name(oEditor, objname):
     """
     Return the object ID of the specified part.
@@ -805,6 +820,7 @@ def get_object_id_by_name(oEditor, objname):
     """
     return oEditor.GetObjectIDByName(objname)
 
+@conf.checkDefaultEditor
 def paste(oEditor):
     """
     Paste a design in the active project from the clipboard.
@@ -822,6 +838,7 @@ def paste(oEditor):
     pastelist = oEditor.Paste()
     return pastelist
 
+@conf.checkDefaultEditor
 def imprint(oEditor, blanklist, toollist, KeepOriginals=False):
     """
     Imprint an object onto another object.
@@ -837,6 +854,7 @@ def imprint(oEditor, blanklist, toollist, KeepOriginals=False):
 
     return oEditor.Imprint(imprintselectionsarray, imprintparams)
 
+@conf.checkDefaultEditor
 def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
                         CreateNewObjectsFlag=False, CreateGroupsForNewObjectsFlag=False):
     """
@@ -887,6 +905,7 @@ def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
 
     return partlist + list(objectName)
 
+@conf.checkDefaultEditor
 def duplicate_around_axis(oEditor, partlist, angle, clonesNumber, axis="Z",
                         CreateNewObjectsFlag=False, CreateGroupsForNewObjectsFlag=False):
     """
@@ -934,6 +953,7 @@ def duplicate_around_axis(oEditor, partlist, angle, clonesNumber, axis="Z",
 
     return partlist + list(objectName)
 
+@conf.checkDefaultEditor
 def duplicate_mirror(oEditor, partlist, base, normal, CreateGroupsForNewObjectsFlag=False):
     """
     Duplicate-mirror specified parts about a given base point with respect
@@ -987,6 +1007,7 @@ def duplicate_mirror(oEditor, partlist, base, normal, CreateGroupsForNewObjectsF
 
     return partlist + list(objectName)
 
+@conf.checkDefaultEditor
 def mirror(oEditor, partlist, base, normal):
     """
     Mirror specified parts about a given base point with respect to a given
@@ -1023,6 +1044,7 @@ def mirror(oEditor, partlist, base, normal):
 
     return get_selections(oEditor)
 
+@conf.checkDefaultEditor
 def sweep_along_vector(oEditor, obj_name_list, x, y, z):
     """
     Sweeps the specified 1D or 2D parts along a vector.
@@ -1062,6 +1084,7 @@ def sweep_along_vector(oEditor, obj_name_list, x, y, z):
 
     return get_selections(oEditor)
 
+@conf.checkDefaultEditor
 def rotate(oEditor, partlist, axis, angle):
     """
     Rotate specified parts.
@@ -1091,6 +1114,7 @@ def rotate(oEditor, partlist, axis, angle):
 
     oEditor.Rotate(selectionsarray, rotateparametersarray)
 
+@conf.checkDefaultEditor
 def subtract(oEditor, blanklist, toollist, KeepOriginals=False):
     """
     Subtract the specified objects.
@@ -1130,6 +1154,7 @@ def subtract(oEditor, blanklist, toollist, KeepOriginals=False):
 
     return blanklist[0]
 
+@conf.checkDefaultEditor
 def unite(oEditor, partlist, KeepOriginals=False):
     """
     Unite the specified objects.
@@ -1171,6 +1196,7 @@ def unite(oEditor, partlist, KeepOriginals=False):
 
     return partlist[0]
 
+@conf.checkDefaultEditor
 def scale(oEditor, partlist, x, y, z):
     """
     Scale specified parts.
@@ -1204,6 +1230,7 @@ def scale(oEditor, partlist, x, y, z):
 
     oEditor.Scale(selectionsarray, scaleparametersarray)
 
+@conf.checkDefaultEditor
 def get_object_name_by_faceid(oEditor, faceid):
     """
     Return the object name corresponding to the given face ID.
@@ -1223,6 +1250,7 @@ def get_object_name_by_faceid(oEditor, faceid):
     """
     return oEditor.GetObjectNameByFaceID(faceid)
 
+@conf.checkDefaultEditor
 def import_model(oEditor,
                  sourcefile,
                  HealOption=1,
@@ -1280,6 +1308,7 @@ def import_model(oEditor,
 
     return get_selections(oEditor)
 
+@conf.checkDefaultEditor
 def get_edge_by_position(oEditor, bodyname, x, y, z):
     """
     Get the edge of a given body that lies at a given position.
@@ -1315,6 +1344,7 @@ def get_edge_by_position(oEditor, bodyname, x, y, z):
 
     return edgeid
 
+@conf.checkDefaultEditor
 def fillet(oEditor, partlist, edgelist, radius, vertexlist=[], setback=0):
     """
     Create fillets on the given edges.
@@ -1365,6 +1395,7 @@ def fillet(oEditor, partlist, edgelist, radius, vertexlist=[], setback=0):
 
     oEditor.Fillet(selectionsarray, filletparameters)
 
+@conf.checkDefaultEditor
 def separate_body(oEditor, partlist, NewPartsModelFlag="Model"):
     """
     Separate bodies of the specified multi-lump object
@@ -1392,6 +1423,7 @@ def separate_body(oEditor, partlist, NewPartsModelFlag="Model"):
 
     return (partlist[0],) + get_selections(oEditor)
 
+@conf.checkDefaultEditor
 def delete(oEditor, partlist):
     """
     Delete selected objects, coordinate systems, points, planes, and others.
@@ -1413,6 +1445,7 @@ def delete(oEditor, partlist):
 
     return oEditor.Delete(selectionsarray)
 
+@conf.checkDefaultEditor
 def split(oEditor, partlist,
           NewPartsModelFlag="Model",
           SplitPlane='XY',
@@ -1452,6 +1485,7 @@ def split(oEditor, partlist,
 
     return oEditor.Split(selectionsarray, splittoparams)
 
+@conf.checkDefaultEditor
 def get_face_by_position(oEditor, bodyname, x, y, z):
     """
     Get the face of a given body that lies at a given position.
@@ -1484,6 +1518,7 @@ def get_face_by_position(oEditor, bodyname, x, y, z):
 
     return faceid
 
+@conf.checkDefaultEditor
 def uncover_faces(oEditor, partlist, dictoffacelists):
     """
     Uncover specified faces.
@@ -1513,6 +1548,7 @@ def uncover_faces(oEditor, partlist, dictoffacelists):
 
     oEditor.UncoverFaces(selectionsarray, uncoverparametersarray)
 
+@conf.checkDefaultEditor
 def connect(oEditor, partlist):
     """
     Connects specified 1-D parts to form a sheet, or specified 2-D parts to
@@ -1545,6 +1581,7 @@ def connect(oEditor, partlist):
 
     return partlist[0]
 
+@conf.checkDefaultEditor
 def rename_part(oEditor, oldname, newname):
     """
     Rename a part.
@@ -1567,6 +1604,7 @@ def rename_part(oEditor, oldname, newname):
 
     return oEditor.RenamePart(renameparamsarray)
 
+@conf.checkDefaultEditor
 def get_face_ids(oEditor, body_name):
     """
     Get the face id list of a given body name.

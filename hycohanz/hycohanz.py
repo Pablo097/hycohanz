@@ -18,19 +18,11 @@ import warnings
 
 warnings.simplefilter('default')
 
-from hycohanz.appobject import setup_interface
+from hycohanz.conf import *
 
-from hycohanz.desktop import (quit_application,
-                              new_project,
-                              open_project,
-                              close_project_byname,
-                              get_active_project,
-                              close_project_byhandle,
-                              close_current_project,
-                              get_projects,
-                              close_all_projects,
-                              close_all_projects_except_current,
-                              save_as_project)
+from hycohanz.appobject import *
+
+from hycohanz.desktop import *
 
 from hycohanz.project import *
 

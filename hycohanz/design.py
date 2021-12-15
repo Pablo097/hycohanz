@@ -7,6 +7,9 @@ At last count there were 2 functions implemented out of 27.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import hycohanz.conf as conf
+
+@conf.checkDefaultDesign
 def get_module(oDesign, ModuleName):
     """
     Get a module handle for the given module.
@@ -37,6 +40,7 @@ def get_module(oDesign, ModuleName):
 
     return oModule
 
+@conf.checkDefaultDesign
 def create_open_region(oDesign, frequency, Boundary="Radiation", ApplyInfiniteGP=False):
     """
     Creates an open region
@@ -61,6 +65,7 @@ def create_open_region(oDesign, frequency, Boundary="Radiation", ApplyInfiniteGP
 			"ApplyInfiniteGP:=" , ApplyInfiniteGP
 		])
 
+@conf.checkDefaultDesign
 def set_active_editor(oDesign, editorname="3D Modeler"):
     """
     Set the active editor.
@@ -79,10 +84,11 @@ def set_active_editor(oDesign, editorname="3D Modeler"):
         The HFSS Editor object.
 
     """
-    oEditor = oDesign.SetActiveEditor(editorname)
+    conf.oEditor = oDesign.SetActiveEditor(editorname)
 
-    return oEditor
+    return conf.oEditor
 
+@conf.checkDefaultDesign
 def insert_infinite_sphere(oDesign,
                     name = 'Infinite Sphere 1',
                     thetaArray = [0, 180, 2],
@@ -122,6 +128,7 @@ def insert_infinite_sphere(oDesign,
     	])
     return
 
+@conf.checkDefaultDesign
 def solve(oDesign,setup_name_list):
     """
     Solve Setup.

@@ -8,6 +8,9 @@ At last count there were 3 functions implemented out of 17.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import hycohanz.conf as conf
+
+@conf.checkDefaultProject
 def get_project_name(oProject):
     """
     Get the name of the specified project.
@@ -25,6 +28,7 @@ def get_project_name(oProject):
     """
     return oProject.GetName()
 
+@conf.checkDefaultProject
 def set_active_design(oProject, designname):
     """
     Set the active design.
@@ -42,10 +46,11 @@ def set_active_design(oProject, designname):
         The HFSS Design object.
 
     """
-    oEditor = oProject.SetActiveDesign(designname)
+    conf.oDesign = oProject.SetActiveDesign(designname)
 
-    return oEditor
+    return conf.oDesign
 
+@conf.checkDefaultProject
 def insert_design(oProject, designname, solutiontype):
     """
     Insert an HFSS design.  The inserted design becomes the active design.
@@ -70,10 +75,11 @@ def insert_design(oProject, designname, solutiontype):
         The created HFSS design.
 
     """
-    oDesign = oProject.InsertDesign("HFSS", designname, solutiontype, "")
+    conf.oDesign = oProject.InsertDesign("HFSS", designname, solutiontype, "")
 
-    return oDesign
+    return conf.oDesign
 
+@conf.checkDefaultProject
 def get_design(oProject, design_name):
     """
     Returns specified design.
@@ -94,6 +100,7 @@ def get_design(oProject, design_name):
     oDesign = oProject.GetDesign(design_name)
     return oDesign
 
+@conf.checkDefaultProject
 def get_top_design_list(oProject):
     """
     Returns a list of the names of the top-level designs.
@@ -114,6 +121,7 @@ def get_top_design_list(oProject):
     design_list = list(oProject.GetTopDesignList())
     return map(str,design_list)
 
+@conf.checkDefaultProject
 def save(oProject):
     """
     Saves the project.

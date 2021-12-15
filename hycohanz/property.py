@@ -8,11 +8,13 @@ At last count there were 1 functions implemented out of 7.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import hycohanz.conf as conf
 from hycohanz.expression import Expression
 import re
 import math
 from quantiphy import Quantity
 
+@conf.checkDefaultDesign
 def add_properties(oDesign, name, value):
     """
     Add design properties.
@@ -50,6 +52,7 @@ def add_properties(oDesign, name, value):
 
     oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
 
+@conf.checkDefaultDesign
 def add_property(oDesign, name, value):
     """
     Add a design property.
@@ -70,6 +73,7 @@ def add_property(oDesign, name, value):
     """
     add_properties(oDesign, [name], [value])
 
+@conf.checkDefaultProject
 def set_variable(oProject, name, value):
     """
     Change a design property.  This function differs significantly from
@@ -97,6 +101,7 @@ def set_variable(oProject, name, value):
         oDesign = oProject.GetActiveDesign()
         oDesign.SetVariableValue(name,Expression(value).expr)
 
+@conf.checkDefaultProject
 def get_variables(oProject,oDesign=''):
     """
     get list of non-indexed variables.
@@ -121,6 +126,7 @@ def get_variables(oProject,oDesign=''):
         variable_list = list(oDesign.GetVariables())
     return map(str,variable_list)
 
+@conf.checkDefaultDesign
 def get_variable_value(oDesign,varName):
     """
     get the value of a variable.
@@ -140,6 +146,7 @@ def get_variable_value(oDesign,varName):
     """
     return oDesign.GetVariableValue(Expression(varName).expr)
 
+@conf.checkDefaultDesign
 def expand_expression(oDesign, exprValue):
     """
     Expands an expression with all the numeric values and
@@ -183,11 +190,12 @@ def expand_expression(oDesign, exprValue):
                 str1 = str1.replace(variable, str(math.pi))
             else:
                 str2 = get_variable_value(oDesign, variable)
-                # print('De HFSS se obtiene que esta variable se expande a: '+str2)
+                # print('De HFSS: '+variable+' = '+str2)
                 str1 = str1.replace(variable, expand_expression(oDesign, str2))
-    # print('String ya sustituido: '+str1)
+    # print('Expresion expandida: '+str1)
     return str1
 
+@conf.checkDefaultDesign
 def eval_expression(oDesign, exprValue):
     """
     Evaluates an expression taking the necessary HFSS design variables
@@ -223,4 +231,6 @@ def eval_expression(oDesign, exprValue):
         else:
             str1 = str1.replace(variableWithUnits, str(float(Quantity(variableWithUnits))))
         # print(str1)
-    return eval(str1)
+    value = eval(str1)
+    # print('Expresion con unidades en SI: '+str1+' = '+str(value))
+    return value

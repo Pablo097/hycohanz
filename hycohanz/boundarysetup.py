@@ -9,10 +9,12 @@ At last count there were 4 functions implemented out of 20.
 from __future__ import division, print_function, unicode_literals, absolute_import
 import re
 
+import hycohanz.conf as conf
 from hycohanz.design import get_module
 from hycohanz.property import eval_expression
 from hycohanz.expression import Expression as Ex
 
+@conf.checkDefaultDesign
 def assign_perfect_e(oDesign, boundaryname, facelist, InfGroundPlane=False):
     """
     Create a perfect E boundary.
@@ -33,6 +35,7 @@ def assign_perfect_e(oDesign, boundaryname, facelist, InfGroundPlane=False):
     oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
     oBoundarySetupModule.AssignPerfectE(["Name:" + boundaryname, "Faces:=", facelist, "InfGroundPlane:=", InfGroundPlane])
 
+@conf.checkDefaultDesign
 def assign_radiation(oDesign,
                      faceidlist,
                      IsIncidentField=False,
@@ -92,6 +95,7 @@ def assign_radiation(oDesign,
 
     oBoundarySetupModule.AssignRadiation(arg)
 
+@conf.checkDefaultDesign
 def assign_perfect_h(oDesign, boundaryname, facelist):
     """
     Create a perfect H boundary.
@@ -112,6 +116,7 @@ def assign_perfect_h(oDesign, boundaryname, facelist):
     oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
     oBoundarySetupModule.AssignPerfectH(["Name:" + boundaryname, "Faces:=", facelist])
 
+@conf.checkDefaultDesign
 def assign_anisotropic_impedance(oDesign,
                                 faceList,
                                 resistanceArray,
@@ -153,6 +158,7 @@ def assign_anisotropic_impedance(oDesign,
                     "ZyyReactance:="	, Ex(reactanceArray[3]).expr]
     oModule.AssignAnisotropicImpedance(anisImpArray)
 
+@conf.checkDefaultDesign
 def assign_waveport_multimode(oDesign,
                               faceidlist,
                               portname="WP1",
@@ -207,12 +213,14 @@ def assign_waveport_multimode(oDesign,
 
     oBoundarySetupModule.AssignWavePort(waveportarray)
 
+@conf.checkDefaultDesign
 def assign_waveport_intline(oDesign,
                               faceidlist,
                               startCoord,
                               stopCoord,
                               portname="WP1",
-                              RenormalizeAllTerminals=True,
+                              RenormalizeAllTerminals=False,
+                              Impedance="50ohm",
                               UseLineAlignment=False,
                               DeembedDistance=0,
                               AlignmentGroup=0,
@@ -278,6 +286,9 @@ def assign_waveport_intline(oDesign,
                         ],
                         "AlignmentGroup:=", AlignmentGroup,
 					    "CharImp:=", CharImp])
+    if RenormalizeAllTerminals == True:
+        modesarray[1].append("RenormImp:="),
+        modesarray[1].append(Impedance)
 
     waveportarray = ["NAME:" + portname,
                      "Faces:=", faceidlist,
@@ -293,6 +304,7 @@ def assign_waveport_intline(oDesign,
 
     oBoundarySetupModule.AssignWavePort(waveportarray)
 
+@conf.checkDefaultDesign
 def assign_lumpedport_intline(oDesign,
                               faceidlist,
                               startCoord,

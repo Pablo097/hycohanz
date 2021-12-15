@@ -7,8 +7,10 @@ At last count there were 2 functions implemented out of 20.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
+import hycohanz.conf as conf
 from hycohanz.design import get_module
 
+@conf.checkDefaultDesign
 def insert_frequency_sweep(oDesign,
                            setupname,
                            startvalue,
@@ -75,6 +77,7 @@ def insert_frequency_sweep(oDesign,
                                  "SaveRadFields:=", SaveRadFieldsOnly,
                                  "ExtrapToDC:=", ExtrapToDC])
 
+@conf.checkDefaultDesign
 def insert_analysis_setup(oDesign,
                           Frequency,
                           MaxDeltaS=0.02,

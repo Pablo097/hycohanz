@@ -9,11 +9,12 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import warnings
 
+import hycohanz.conf as conf
 from hycohanz.desktop import get_active_project
 
 warnings.simplefilter('default')
 
-
+@conf.checkDefaultDesktop
 def add_material(oDesktop,
                 material_name,
                 rel_permittivity=1,
@@ -73,7 +74,7 @@ def add_material(oDesktop,
         oDefinitionManager = oProject.GetDefinitionManager()
         return oDefinitionManager.AddMaterial(mat_param)
 
-
+@conf.checkDefaultProject
 def does_material_exist(oProject,material_name):
     """
     Check if material exists.
