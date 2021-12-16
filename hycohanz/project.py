@@ -51,6 +51,25 @@ def set_active_design(oProject, designname):
     return conf.oDesign
 
 @conf.checkDefaultProject
+def get_active_design(oProject):
+    """
+    Returns the design in the active project.
+
+    Parameters
+    ----------
+    oProject : pywin32 COMObject
+        The HFSS project in which the operation will be performed.
+
+    Returns
+    -------
+    oDesign : pywin32 COMObject
+        The active HFSS design.
+
+    """
+    conf.oDesign = oProject.GetActiveDesign()
+    return conf.oDesign
+
+@conf.checkDefaultProject
 def insert_design(oProject, designname, solutiontype):
     """
     Insert an HFSS design.  The inserted design becomes the active design.

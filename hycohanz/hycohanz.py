@@ -18,17 +18,53 @@ import warnings
 
 warnings.simplefilter('default')
 
-from hycohanz.conf import *
+from hycohanz.conf import (delete_all_COM_objects,
+                            oDesktop,
+                            oAnsoftApp,
+                            oProject,
+                            oDesign,
+                            oEditor
+                            )
 
-from hycohanz.appobject import *
+from hycohanz.appobject import setup_interface
 
-from hycohanz.desktop import *
+from hycohanz.desktop import (quit_application,
+                              new_project,
+                              open_project,
+                              close_project_byname,
+                              get_active_project,
+                              close_project_byhandle,
+                              close_current_project,
+                              get_projects,
+                              close_all_projects,
+                              close_all_projects_except_current,
+                              save_as_project
+                              )
 
-from hycohanz.project import *
+from hycohanz.project import (get_project_name,
+                              set_active_design,
+                              get_active_design,
+                              insert_design,
+                              get_design,
+                              get_top_design_list,
+                              save
+                              )
 
-from hycohanz.property import *
+from hycohanz.property import ( add_properties,
+                                add_property,
+                                set_variable,
+                                get_variables,
+                                get_variable_value,
+                                expand_expression,
+                                eval_expression
+                                )
 
-from hycohanz.design import *
+from hycohanz.design import (get_module,
+                             set_active_editor,
+                             create_open_region,
+                             insert_infinite_sphere,
+                             solve
+                             )
 
 from hycohanz.expression import Expression
 from hycohanz.modeler3d import *
@@ -37,15 +73,30 @@ from hycohanz.material import ( add_material,
                                 )
 
 from hycohanz.analysis_setup import (insert_frequency_sweep,
-                                     insert_analysis_setup)
+                                     insert_analysis_setup,
+                                     get_setups,
+                                     get_sweeps)
 
-from hycohanz.boundarysetup import *
+from hycohanz.boundarysetup import (assign_perfect_e,
+                                    assign_radiation,
+                                    assign_perfect_h,
+                                    assign_anisotropic_impedance,
+                                    assign_waveport_multimode,
+                                    assign_waveport_intline,
+                                    assign_lumpedport_intline,
+                                    )
 
 from hycohanz.fieldscalculator import (enter_vol,
                                        calc_op,
                                        clc_eval,
                                        enter_qty,
                                        get_top_entry_value)
+
+from hycohanz.reporter import  (export_to_file,
+                                get_all_report_names,
+                                create_report,
+                                add_traces,
+                                rename_trace)
 
 class App():
     """

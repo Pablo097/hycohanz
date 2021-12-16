@@ -3,7 +3,7 @@
 Functions in this module correspond more or less to the functions described
 in the HFSS Scripting Guide, Section "Analysis Setup Module Script Commands"
 
-At last count there were 2 functions implemented out of 20.
+At last count there were 4 functions implemented out of 20.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
@@ -135,3 +135,38 @@ def insert_analysis_setup(oDesign,
             "ThermalFeedback:=", ThermalFeedback,
             "NoAdditionalRefinementOnImport:=", NoAdditionalRefinementOnImport])
     return Name
+
+@conf.checkDefaultDesign
+def get_setups(oDesign):
+    """
+    Gets the names of analysis setups in a design.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design object upon which to operate.
+
+    Returns
+    -------
+    reportnames : list of str
+        A list with the names of all the analysis setups in the Design
+    """
+    oModule = get_module(oDesign, "AnalysisSetup")
+    setup_list = list(oModule.GetSetups())
+    return map(str, setup_list)
+
+@conf.checkDefaultDesign
+def get_sweeps(oDesign, setup_name):
+    """
+    Gets the names of all sweeps in a given analysis setup.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design object upon which to operate.
+    SweepName : str
+        Name of HFSS sweep to use, for example "LastAdaptive"
+    """
+    oModule = get_module(oDesign, "AnalysisSetup")
+    sweep_list = list(oModule.GetSweeps(setup_name))
+    return map(str, sweep_list)
