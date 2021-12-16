@@ -98,9 +98,15 @@ hycohanz provides convenience functions for the following:
 - Creating 3D models using polylines, circles, rectangles, spheres, etc.
 - Querying objects and groups of objects
 - Object manipulation via unite, subtract, imprint, mirror, move, cut, paste, rotate, scale, sweep, etc.
-- Assigning boundary conditions
+- Assigning boundary conditions and excitations
 - Manipulating projects and designs
 - Creating analysis setups and frequency sweeps
+- Create reports and export data
+
+In addition, most of the functions support feeding them with numeric values or HFSS expressions (strings with 
+equations using HFSS design variables) indistinctly. This is true even for the start and end coordinates of the 
+integration lines for the excitation assignment functions (waveport, lumpedport...), which are known to only admit
+explicitly numeric values by default.
 
 Examples
 --------
