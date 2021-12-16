@@ -3,7 +3,7 @@
 Functions in this module correspond more or less to the functions described
 in the HFSS Scripting Guide, Section "Desktop Object Script Commands".
 
-At last count there were 10 functions implemented out of 31.
+At last count there were 11 functions implemented out of 31.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
@@ -110,6 +110,28 @@ def get_active_project(oDesktop):
 
     """
     conf.oProject = oDesktop.GetActiveProject()
+
+    return conf.oProject
+
+@conf.checkDefaultDesktop
+def set_active_project(oDesktop, projectname):
+    """
+    Set the specific project as the active one.
+
+    Parameters
+    ----------
+    oDesktop : pywin32 COMObject
+        The HFSS desktop object upon which to operate.
+    projectname : string
+        The name of the HFSS project to set as active.
+
+    Returns
+    -------
+    oProject : pywin32 COMObject
+        The HFSS project object upon which to operate.
+
+    """
+    conf.oProject = oDesktop.SetActiveProject(projectname)
 
     return conf.oProject
 
