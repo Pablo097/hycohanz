@@ -16,7 +16,7 @@ Minimal Example
 
     [oAnsoftApp, oDesktop] = hfss.setup_interface()
 
-    raw_input('Press "Enter" to quit HFSS.>')
+    input('Press "Enter" to quit HFSS.>')
 
     hfss.quit_application(oDesktop)
 
@@ -26,6 +26,26 @@ Minimal Example
 Dozens more examples_ are included in the examples directory of the source distribution.
 
 .. _examples:  https://github.com/Pablo097/hycohanz/tree/devel/examples
+
+However, for the moment, all these examples are from the original repository and they
+have not been updated since 2014, so they do not incorporate the newer functions.
+
+This library now supports calling every function without their COM object first arguments
+(i.e. oAnsoftApp, oDesktop, oProject, oEditor and oDesign, correspondingly),
+as their current values are handled and stored internally. That is to say that
+the previous minimal example can be simplified to:
+
+.. sourcecode:: python
+
+    import hycohanz as hfss
+
+    hfss.setup_interface()
+
+    input('Press "Enter" to quit HFSS.>')
+
+    hfss.quit_application()
+
+    hfss.clean_interface()
 
 
 Quick Install
