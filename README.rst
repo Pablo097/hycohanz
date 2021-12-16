@@ -25,7 +25,7 @@ Minimal Example
 
 Dozens more examples_ are included in the examples directory of the source distribution.
 
-.. _examples:  https://github.com/mradway/hycohanz/tree/devel/examples
+.. _examples:  https://github.com/Pablo097/hycohanz/tree/devel/examples
 
 
 Quick Install
@@ -41,7 +41,7 @@ Also, you will need to install the quantiphy_ library:
 
 1. Download the `.zip file`_ from Github.
 
-.. _`.zip file`:  https://github.com/mradway/hycohanz/archive/devel.zip
+.. _`.zip file`:  https://github.com/Pablo097/hycohanz/archive/devel.zip
 
 2. Unzip to a convenient location.
 
@@ -86,7 +86,7 @@ Examples
 --------
 Dozens of examples_ are included in the examples directory of the source distribution.
 
-.. _examples:  https://github.com/mradway/hycohanz/tree/devel/examples
+.. _examples:  https://github.com/Pablo097/hycohanz/tree/devel/examples
 
 Warning
 -------
@@ -121,7 +121,7 @@ Download
 --------
 
 A zip file of the development branch can be downloaded from
-https://github.com/mradway/hycohanz/archive/devel.zip
+https://github.com/Pablo097/hycohanz/archive/devel.zip
 
 Of course, one can also pull the source tree in the usual way using git.
 
