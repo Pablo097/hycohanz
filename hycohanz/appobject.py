@@ -38,3 +38,14 @@ def setup_interface():
     conf.oDesktop = conf.oAnsoftApp.GetAppDesktop()
 
     return [conf.oAnsoftApp, conf.oDesktop]
+
+def clean_interface():
+    """
+    This function should be called at the end of each script that has executed
+    the setup_interface() function.
+    """
+    del conf.oDesktop
+    del conf.oAnsoftApp
+    del conf.oProject
+    del conf.oDesign
+    del conf.oEditor

@@ -4,7 +4,7 @@ HFSS functions that use the 3D modeler. Functions in this module correspond
 more or less to the functions described in the HFSS Scripting Guide,
 Section "3D Modeler Editor Script Commands".
 
-At last count there were 31 functions implemented out of 93.
+At last count there were 37 functions implemented out of 93.
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import

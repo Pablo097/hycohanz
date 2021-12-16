@@ -4,7 +4,7 @@ HFSS functions that use the Property module. Functions in this module correspond
 more or less to the functions described in the HFSS Scripting Guide,
 Section "Property Script Commands".
 
-At last count there were 1 functions implemented out of 7.
+At last count there were 4 functions implemented out of 7.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 

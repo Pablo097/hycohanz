@@ -1,3 +1,13 @@
+"""
+This module is used as a global configuration file, where the global
+COM objects are stored, and functions related to them are implemented.
+
+All the implemented functions are decorators/wrappers that enable
+calling each hycohanz function without their first COM object argument
+(oDesign, oEditor, oProject, etc.) and, instead, using the global COM
+objects defined here, that are updated by all the related functions internally.
+"""
+
 import win32com.client
 
 oDesktop = None
@@ -5,18 +15,6 @@ oAnsoftApp = None
 oProject = None
 oDesign = None
 oEditor = None
-
-def delete_all_COM_objects():
-    global oDesktop
-    del oDesktop
-    global oAnsoftApp
-    del oAnsoftApp
-    global oProject
-    del oProject
-    global oDesign
-    del oDesign
-    global oEditor
-    del oEditor
 
 def checkDefaultDesktop(func):
     """

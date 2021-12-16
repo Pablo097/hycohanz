@@ -18,15 +18,15 @@ import warnings
 
 warnings.simplefilter('default')
 
-from hycohanz.conf import (delete_all_COM_objects,
-                            oDesktop,
+from hycohanz.conf import (oDesktop,
                             oAnsoftApp,
                             oProject,
                             oDesign,
                             oEditor
                             )
 
-from hycohanz.appobject import setup_interface
+from hycohanz.appobject import (setup_interface,
+                                clean_interface)
 
 from hycohanz.desktop import (quit_application,
                               new_project,

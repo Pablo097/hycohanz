@@ -4,7 +4,7 @@ HFSS functions that use the Project module. Functions in this module correspond
 more or less to the functions described in the HFSS Scripting Guide,
 Section "Project Object Script Commands".
 
-At last count there were 3 functions implemented out of 17.
+At last count there were 7 functions implemented out of 17.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
