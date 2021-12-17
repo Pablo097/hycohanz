@@ -51,8 +51,9 @@ the previous minimal example can be simplified to:
 Quick Install
 -------------
 
-Installation is easy if you already have HFSS_, Python_, and the pywin32_ Windows extensions for Python.
-Also, you will need to install the quantiphy_ library:
+Installation is easy if you already have HFSS_ and Python_. hycohanz uses
+the pywin32_ Windows extensions for Python and the quantiphy_ library. All of
+these are automatically installed (if not already) when installing hycohanz.
 
 .. _HFSS: http://www.ansys.com/Products/Simulation+Technology/Electromagnetics/Signal+Integrity/ANSYS+HFSS
 .. _Python:  http://www.python.org
@@ -65,9 +66,9 @@ Also, you will need to install the quantiphy_ library:
 
 2. Unzip to a convenient location.
 
-3. At the Windows command shell prompt, run::
+3. Open a Windows command shell prompt in that location and run::
 
-    > C:\Python27\python setup.py install
+    > pip install .
 
 See `Detailed Installation`_ if you don't already have Python installed.
 
