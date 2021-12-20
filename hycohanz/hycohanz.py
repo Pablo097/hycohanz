@@ -48,7 +48,7 @@ from hycohanz.project import (get_project_name,
                               insert_design,
                               get_design,
                               get_top_design_list,
-                              save
+                              save_project
                               )
 
 from hycohanz.property import ( add_properties,

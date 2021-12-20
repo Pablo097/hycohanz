@@ -141,7 +141,7 @@ def get_top_design_list(oProject):
     return map(str,design_list)
 
 @conf.checkDefaultProject
-def save(oProject):
+def save_project(oProject):
     """
     Saves the project.
 

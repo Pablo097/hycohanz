@@ -856,7 +856,9 @@ def imprint(oEditor, blanklist, toollist, KeepOriginals=False):
 
 @conf.checkDefaultEditor
 def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
-                        CreateNewObjectsFlag=False, CreateGroupsForNewObjectsFlag=False):
+                        CreateNewObjectsFlag=False,
+                        CreateGroupsForNewObjectsFlag=False,
+                        DuplicateAssignments=True):
     """
     Duplicates specified parts along a line.
 
@@ -897,7 +899,7 @@ def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
     objectName = oEditor.DuplicateAlongLine(selectionsarray, duplicateparamsarray,
         [
             "NAME:Options",
-            "DuplicateAssignments:=", True
+            "DuplicateAssignments:=", DuplicateAssignments
         ],
         [
             "CreateGroupsForNewObjects:=", CreateGroupsForNewObjectsFlag
@@ -907,7 +909,9 @@ def duplicate_along_line(oEditor, partlist, x, y, z, clonesNumber,
 
 @conf.checkDefaultEditor
 def duplicate_around_axis(oEditor, partlist, angle, clonesNumber, axis="Z",
-                        CreateNewObjectsFlag=False, CreateGroupsForNewObjectsFlag=False):
+                        CreateNewObjectsFlag=False,
+                        CreateGroupsForNewObjectsFlag=False,
+                        DuplicateAssignments=True):
     """
     Duplicates specified parts around a given axis.
 
@@ -945,7 +949,7 @@ def duplicate_around_axis(oEditor, partlist, angle, clonesNumber, axis="Z",
     objectName = oEditor.DuplicateAroundAxis(selectionsarray, duplicateparamsarray,
         [
             "NAME:Options",
-            "DuplicateAssignments:=", True
+            "DuplicateAssignments:=", DuplicateAssignments
         ],
         [
             "CreateGroupsForNewObjects:=", CreateGroupsForNewObjectsFlag
@@ -954,7 +958,9 @@ def duplicate_around_axis(oEditor, partlist, angle, clonesNumber, axis="Z",
     return partlist + list(objectName)
 
 @conf.checkDefaultEditor
-def duplicate_mirror(oEditor, partlist, base, normal, CreateGroupsForNewObjectsFlag=False):
+def duplicate_mirror(oEditor, partlist, base, normal,
+                        CreateGroupsForNewObjectsFlag=False,
+                        DuplicateAssignments=True):
     """
     Duplicate-mirror specified parts about a given base point with respect
     to a given plane.
@@ -975,15 +981,6 @@ def duplicate_mirror(oEditor, partlist, base, normal, CreateGroupsForNewObjectsF
     selectionlist : list
         List with the original and duplicated parts names
     """
-    # # For some reason, in the mirrorparamsarray, HFSS does not
-    # # accept numeric-only values, so the units are required.
-    # for n in range(3):
-    #     if isinstance(base[n], (float, int)):
-    #         base[n] = str(base[n]) + "meter"
-    #     if isinstance(normal[n], (float, int)):
-    #         normal[n] = str(normal[n]) + "meter"
-    # # INDEED, IT WORKS FINE. The above is not necessary
-
     selectionsarray = ["NAME:Selections",
                        "Selections:=", ','.join(partlist),
                        "NewPartsModelFlag:=", "Model"]
@@ -999,7 +996,7 @@ def duplicate_mirror(oEditor, partlist, base, normal, CreateGroupsForNewObjectsF
     objectName = oEditor.DuplicateMirror(selectionsarray, mirrorparamsarray,
         [
             "NAME:Options",
-            "DuplicateAssignments:=", True
+            "DuplicateAssignments:=", DuplicateAssignments
         ],
         [
             "CreateGroupsForNewObjects:=", CreateGroupsForNewObjectsFlag
