@@ -1,10 +1,29 @@
 import hycohanz as hfss
 
-[oAnsoftApp, oDesktop] = hfss.setup_interface()
+# Remember: with the current library version, all the oAnsoftApp, oDesktop,
+# oProject, oDesign and oEditor objects can be omitted.
 
-raw_input('Press "Enter" to quit HFSS.>')
+## In this example, the difference is explicitly shown. The code commented next
+## is valid but more cumbersome:
 
-hfss.quit_application(oDesktop)
+# [oAnsoftApp, oDesktop] = hfss.setup_interface()
+#
+# input('Press "Enter" to quit HFSS.>')
+#
+# hfss.quit_application(oDesktop)
+#
+# hfss.clean_interface()
 
-del oDesktop
-del oAnsoftApp
+
+## The code commented above is equivalent to:
+
+hfss.setup_interface()
+
+input('Press "Enter" to quit HFSS.>')
+
+hfss.quit_application()
+
+hfss.clean_interface()
+
+
+# As can be seen, this way it is clearer and cleaner

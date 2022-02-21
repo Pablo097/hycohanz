@@ -1,7 +1,7 @@
 Examples
 ========
 
-In this directory are a number of very simple example scripts.  Basically, each script is intended to highlight basic usage of a single hycohanz_ function given by the name of the script itself.  This is intended to make it easy for one to find an example script for an unfamiliar function.  
+In this directory are a number of very simple example scripts.  Basically, each script is intended to highlight basic usage of a single hycohanz_ function given by the name of the script itself (each example is inside the directory named after the Python script in which the function is implemented).  This is intended to make it easy for one to find an example script for an unfamiliar function.
 
 .. _hycohanz:  http://mradway.github.io/hycohanz/
 
@@ -21,7 +21,7 @@ To keep the examples as simple as possible, almost all of these scripts interact
 
     [oAnsoftApp, oDesktop] = hfss.setup_interface()
 
-    raw_input('Press "Enter" to quit HFSS.>')
+    input('Press "Enter" to quit HFSS.>')
 
     hfss.quit_application(oDesktop)
 
@@ -32,7 +32,7 @@ Note that the last two lines are very important; they delete the Windows COM obj
 
 Unfortunately, your only indication that this did not happen properly is that HFSS begins to exhibit strange behavior.  For instance, if you attempt to shut down HFSS after a running script crashes it may appear to do so properly; however, if you examine the process list in the Windows Task Manager, you may find hfss.exe still running.  We'll refer to that process as a zombie.  Furthermore, if you restart HFSS, you may find that it appears to start up fine, but when you try to run scripts again you may find that they no longer work.  Upon examining the process list again you may find that there are in fact *two* HFSS processes running, the zombie and the new process.  To get your scripts working again is a simple matter of deleting the zombie process from the Windows Task Manager process listing.
 
-Of course, you can attempt to deal with this issue by wrapping each hycohanz call in a Python try...except...finally block, but that gets a cumbersome quickly.  Fortunately, Python has the built-in concept of a `context manager`_ using the "with" statement (note: this statement has no obvious similarity to the Visual Basic "with" statement).  hycohanz has implemented a basic complement of context managers that can make your HFSS scripting life much easier.  
+Of course, you can attempt to deal with this issue by wrapping each hycohanz call in a Python try...except...finally block, but that gets a cumbersome quickly.  Fortunately, Python has the built-in concept of a `context manager`_ using the "with" statement (note: this statement has no obvious similarity to the Visual Basic "with" statement).  hycohanz has implemented a basic complement of context managers that can make your HFSS scripting life much easier.
 
 .. _`context manager`: http://legacy.python.org/dev/peps/pep-0343/
 
@@ -41,12 +41,32 @@ The new usage pattern ends up looking like the following (adapted from add_prope
 .. sourcecode:: python
 
     import hycohanz as hfss
-    
-    with hfss.App() as App:       
+
+    with hfss.App() as App:
         with hfss.NewProject(App.oDesktop) as P:
             with hfss.InsertDesign(P.oProject, "HFSSDesign1", "DrivenModal") as D:
                 hfss.add_property(D.oDesign, "length", hfss.Expression("1m"))
-            
-                raw_input('Press "Enter" to quit HFSS.>')
+
+                input('Press "Enter" to quit HFSS.>')
 
 Note that all of the explicit setup and teardown code in the old version is missing in the new version; yet, all allocation is handled properly (that is, assuming the hycohanz context managers are implemented correctly).  The setup and teardown logic has been "factored out" (to use a software engineering term) to the hycohanz library, making your scripts cleaner and clearer.
+
+2021 Update
+-----------
+As stated in the main README, the above explanations are from the original project and date back to 2014. Although still valid, the library has been updated to make it easier to use with respect to the handling of the COM objects.
+
+This library now supports calling every function without their COM object first arguments (i.e. oAnsoftApp, oDesktop, oProject, oEditor and oDesign, correspondingly), as their current values are handled and stored internally. That is to say that the first minimal example given in this README can be simplified to:
+
+.. sourcecode:: python
+
+    import hycohanz as hfss
+
+    hfss.setup_interface()
+
+    input('Press "Enter" to quit HFSS.>')
+
+    hfss.quit_application()
+
+    hfss.clean_interface()
+
+Personally, I have not used the "with ... as ..." context manager way so, although theoretically still functional, its correct behavior without the usage of the first argument COM objects has not been proven yet.
