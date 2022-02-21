@@ -27,8 +27,9 @@ Dozens more examples_ are included in the examples directory of the source distr
 
 .. _examples:  https://github.com/Pablo097/hycohanz/tree/devel/examples
 
-However, for the moment, all these examples are from the original repository and they
-have not been updated since 2014, so they do not incorporate the newer functions.
+However, for the moment, the majority of these examples are from the original repository, 
+so they do not incorporate most of the newer functions. Nevertheless, they are enough to
+understand how the library works.
 
 This library now supports calling every function without their COM object first arguments
 (i.e. oAnsoftApp, oDesktop, oProject, oEditor and oDesign, correspondingly),
