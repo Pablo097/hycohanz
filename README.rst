@@ -71,9 +71,9 @@ these are automatically installed (if not already) when installing hycohanz.
 
     > pip install .
 
-See `Detailed Installation`_ if you don't already have Python installed.
+In case you don´t already have Python installed, you can download it from here_.
 
-.. _`Detailed Installation`:  http://mradway.github.io/hycohanz/install.html
+.. _here: https://www.python.org/downloads/
 
 Problems, Bugs, Questions, and Feature Requests
 -----------------------------------------------
