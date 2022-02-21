@@ -70,3 +70,5 @@ This library now supports calling every function without their COM object first 
     hfss.clean_interface()
 
 Personally, I have not used the "with ... as ..." context manager way so, although theoretically still functional, its correct behavior without the usage of the first argument COM objects has not been proven yet.
+
+As a last note, I have added a more complex example in which a Patch antenna fed by a coaxial probe is created ('create_coaxial_fed_patch_antenna.py'). This example uses several functions, makes it clear the convenience of using hycohanz Expressions, and gives a better general idea of how a real script would look like when creating a real structure. I hope it is helpful and explanatory.
