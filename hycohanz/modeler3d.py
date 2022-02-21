@@ -1620,4 +1620,4 @@ def get_face_ids(oEditor, body_name):
     """
 
     face_id_list = list(oEditor.GetFaceIDs(body_name))
-    return map(int,face_id_list)
+    return list(map(int,face_id_list))

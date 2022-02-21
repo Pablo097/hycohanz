@@ -237,24 +237,3 @@ def close_all_projects_except_current(oDesktop):
     for item in projlist:
         if get_project_name(item) != currproj:
             close_project_byhandle(oDesktop, item)
-
-@conf.checkDefaultDesktop
-def save_as_project(oDesktop, filename,overwrite=True):
-    """
-    Save As an HFSS project.
-
-    Parameters
-    ----------
-    oDesktop : pywin32 COMObject
-        The HFSS desktop object to which this function is applied.
-    filename : str
-        The name of the file to save, can include path. Works well with python os paths (import os in your main project)
-
-    Returns
-    -------
-    oProject : pywin32 COMObject
-        An handle to the saved project.
-
-    """
-    oProject = get_active_project(oDesktop)
-    return oProject.SaveAs(filename,overwrite)

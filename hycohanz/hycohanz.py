@@ -38,8 +38,7 @@ from hycohanz.desktop import (quit_application,
                               close_current_project,
                               get_projects,
                               close_all_projects,
-                              close_all_projects_except_current,
-                              save_as_project
+                              close_all_projects_except_current
                               )
 
 from hycohanz.project import (get_project_name,
@@ -48,7 +47,10 @@ from hycohanz.project import (get_project_name,
                               insert_design,
                               get_design,
                               get_top_design_list,
-                              save_project
+                              save_project,
+                              save_as_project,
+                              get_path,
+                              rename_project
                               )
 
 from hycohanz.property import ( add_properties,

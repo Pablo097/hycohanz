@@ -4,7 +4,7 @@ HFSS functions that use the Project module. Functions in this module correspond
 more or less to the functions described in the HFSS Scripting Guide,
 Section "Project Object Script Commands".
 
-At last count there were 7 functions implemented out of 17.
+At last count there were 10 functions implemented out of 17.
 """
 from __future__ import division, print_function, unicode_literals, absolute_import
 
@@ -161,3 +161,69 @@ def save_project(oProject):
 
     oProject.Save()
     return;
+
+@conf.checkDefaultProject
+def save_as_project(oProject, filename, overwrite=True):
+    """
+    Save as an HFSS project.
+
+    Parameters
+    ----------
+    oProject : pywin32 COMObject
+        The HFSS project in which the operation will be performed.
+    filename : str
+        The name of the file to save, requiring the full path.
+        Works well with python os paths (import os in your main project)
+    overwrite : boolean
+        Flag indicating whether to overwrite a possible existing project
+        with the same filename
+
+    Returns
+    -------
+    oProject : pywin32 COMObject
+        A handle to the saved project.
+
+    """
+    return oProject.SaveAs(filename,overwrite)
+
+@conf.checkDefaultProject
+def get_path(oProject):
+    """
+    Get the path of the specified project.
+
+    Parameters
+    ----------
+    oProject : pywin32 COMObject
+        The HFSS project object upon which to operate.
+
+    Returns
+    -------
+    str
+        The path of the project.
+
+    """
+    return oProject.GetPath()
+
+@conf.checkDefaultProject
+def rename_project(oProject, filename, overwrite=True):
+    """
+    Renames the specified project.
+
+    Parameters
+    ----------
+    oProject : pywin32 COMObject
+        The HFSS project object upon which to operate.
+    filename : str
+        The name of the file to save, requiring the full path.
+        Works well with python os paths (import os in your main project)
+    overwrite : boolean
+        Flag indicating whether to overwrite a possible existing project
+        with the same filename
+
+    Returns
+    -------
+    oProject : pywin32 COMObject
+        A handle to the renamed project.
+
+    """
+    return oProject.Rename(filename, overwrite)
