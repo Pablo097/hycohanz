@@ -46,9 +46,10 @@ def set_active_design(oProject, designname):
         The HFSS Design object.
 
     """
-    conf.oDesign = oProject.SetActiveDesign(designname)
+    oDesign = oProject.SetActiveDesign(designname)
+    conf.update_oDesign(oDesign)
 
-    return conf.oDesign
+    return oDesign
 
 @conf.checkDefaultProject
 def get_active_design(oProject):
@@ -66,8 +67,10 @@ def get_active_design(oProject):
         The active HFSS design.
 
     """
-    conf.oDesign = oProject.GetActiveDesign()
-    return conf.oDesign
+    oDesign = oProject.GetActiveDesign()
+    conf.update_oDesign(oDesign)
+
+    return oDesign
 
 @conf.checkDefaultProject
 def insert_design(oProject, designname, solutiontype):
@@ -94,9 +97,10 @@ def insert_design(oProject, designname, solutiontype):
         The created HFSS design.
 
     """
-    conf.oDesign = oProject.InsertDesign("HFSS", designname, solutiontype, "")
+    oDesign = oProject.InsertDesign("HFSS", designname, solutiontype, "")
+    conf.update_oDesign(oDesign)
 
-    return conf.oDesign
+    return oDesign
 
 @conf.checkDefaultProject
 def get_design(oProject, design_name):

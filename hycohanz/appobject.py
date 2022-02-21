@@ -46,6 +46,12 @@ def clean_interface():
     """
     del conf.oDesktop
     del conf.oAnsoftApp
-    del conf.oProject
-    del conf.oDesign
-    del conf.oEditor
+    # del conf.oProject
+    # del conf.oDesign
+    # del conf.oEditor
+    for oProject in conf.oProjectList:
+        del oProject
+    for oDesign in conf.oDesignList:
+        del oDesign
+    for oEditor in conf.oEditorList:
+        del oEditor

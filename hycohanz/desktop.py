@@ -49,9 +49,10 @@ def new_project(oDesktop):
         The created HFSS project.
 
     """
-    conf.oProject = oDesktop.NewProject()
+    oProject = oDesktop.NewProject()
+    conf.update_oProject(oProject)
 
-    return conf.oProject
+    return oProject
 
 @conf.checkDefaultDesktop
 def open_project(oDesktop, filename):
@@ -71,8 +72,10 @@ def open_project(oDesktop, filename):
         An handle to the opened project.
 
     """
-    conf.oProject = oDesktop.OpenProject(filename)
-    return conf.oProject
+    oProject = oDesktop.OpenProject(filename)
+    conf.update_oProject(oProject)
+
+    return oProject
 
 @conf.checkDefaultDesktop
 def close_project_byname(oDesktop, projectname):
@@ -109,9 +112,10 @@ def get_active_project(oDesktop):
         The HFSS project object upon which to operate.
 
     """
-    conf.oProject = oDesktop.GetActiveProject()
+    oProject = oDesktop.GetActiveProject()
+    conf.update_oProject(oProject)
 
-    return conf.oProject
+    return oProject
 
 @conf.checkDefaultDesktop
 def set_active_project(oDesktop, projectname):
@@ -131,9 +135,10 @@ def set_active_project(oDesktop, projectname):
         The HFSS project object upon which to operate.
 
     """
-    conf.oProject = oDesktop.SetActiveProject(projectname)
+    oProject = oDesktop.SetActiveProject(projectname)
+    conf.update_oProject(oProject)
 
-    return conf.oProject
+    return oProject
 
 @conf.checkDefaultDesktop
 def close_project_byhandle(oDesktop, oProject):

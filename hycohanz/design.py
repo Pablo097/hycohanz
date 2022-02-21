@@ -60,9 +60,10 @@ def set_active_editor(oDesign, editorname="3D Modeler"):
         The HFSS Editor object.
 
     """
-    conf.oEditor = oDesign.SetActiveEditor(editorname)
+    oEditor = oDesign.SetActiveEditor(editorname)
+    conf.update_oEditor(oEditor)
 
-    return conf.oEditor
+    return oEditor
 
 @conf.checkDefaultDesign
 def create_open_region(oDesign, frequency, Boundary="Radiation", ApplyInfiniteGP=False):

@@ -13,14 +13,14 @@ from hycohanz.analysis_setup import get_setups, get_sweeps
 
 @conf.checkDefaultDesign
 def create_report(oDesign,
-                  report_name,
-                  report_type,
-                  display_type,
-                  setup_name,
-                  sweep_name,
-                  context_array,
-                  families_array,
-                  report_data_array):
+                  report_name = "S Parameter Plot 1",
+                  report_type = "Modal Solution Data",
+                  display_type = "Rectangular Plot",
+                  setup_name = "Setup1",
+                  sweep_name = "LastAdaptive",
+                  context_array = ["Domain:=", "Sweep"],
+                  families_array = [],
+                  report_data_array = ["X Component:=", "Freq", "Y Component:=", ["dB(S(P1,P1))"]]):
     """
     Creates a new report with a single trace and adds it to the Results branch in the project tree.
 
@@ -30,7 +30,7 @@ def create_report(oDesign,
         The name of the report.
     ReportType : string
         The type of report. Possible values are:
-        "Modal S Parameters" - Only for Driven Modal solution-type problems with ports.
+        "Modal Solution Data" - Only for Driven Modal solution-type problems with ports.
         "Terminal S Parameters" - Only for Driven Terminal solution-type problems with ports.
         "Eigenmode Parameters" - Only for Eigenmode solution-type problems.
         "Fields"
@@ -76,7 +76,8 @@ def create_report(oDesign,
     #  TODO: Provide some error checking on reporttype and displaytype
 
     check_setup(oDesign, setup_name)
-    check_sweep(oDesign, setup_name, sweep_name)
+    if sweep_name != "LastAdaptive":
+        check_sweep(oDesign, setup_name, sweep_name)
     solution_name = setup_name + " : " + sweep_name
 
     oModule = get_module(oDesign, "ReportSetup")
@@ -92,7 +93,8 @@ def create_report(oDesign,
 @conf.checkDefaultDesign
 def export_to_file(oDesign, report_name, filename):
     """
-    From a data table or plot, generates text format, comma delimited, tab delimited, or .dat type output files.
+    From a data table or plot, generates text format, comma delimited,
+    tab delimited, or .dat type output files.
 
     Parameters
     ----------
@@ -171,7 +173,8 @@ def add_traces(oDesign,
 
     """
     check_setup(oDesign, setup_name)
-    check_sweep(oDesign, setup_name, sweep_name)
+    if sweep_name != "LastAdaptive":
+        check_sweep(oDesign, setup_name, sweep_name)
     solution_name = setup_name + " : " + sweep_name
 
     oModule = get_module(oDesign, "ReportSetup")

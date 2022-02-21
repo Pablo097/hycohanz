@@ -18,12 +18,12 @@ import warnings
 
 warnings.simplefilter('default')
 
-from hycohanz.conf import (oDesktop,
-                            oAnsoftApp,
-                            oProject,
-                            oDesign,
-                            oEditor
-                            )
+# from hycohanz.conf import (oDesktop,
+#                             oAnsoftApp,
+#                             oProject,
+#                             oDesign,
+#                             oEditor
+#                             )
 
 from hycohanz.appobject import (setup_interface,
                                 clean_interface)
