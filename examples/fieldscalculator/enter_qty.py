@@ -18,13 +18,13 @@ input('Press "Enter" to set the active design to HFSSDesign1.>')
 
 oDesign = hfss.set_active_design(oProject, 'HFSSDesign1')
 
-input('Press "Enter" to get a handle to the Fields Reporter module.>')
-
-oFieldsReporter = hfss.get_module(oDesign, 'FieldsReporter')
+# input('Press "Enter" to get a handle to the Fields Reporter module.>')
+#
+# oFieldsReporter = hfss.get_module(oDesign, 'FieldsReporter')
 
 input('Press "Enter" to enter the field quantity "Jvol" in the Fields Calculator.>')
 
-hfss.enter_qty(oFieldsReporter, 'Jvol')
+hfss.enter_qty(oDesign, 'Jvol')
 
 print('Open the calculator to verify that the Calculator input reads "CVc : <JVx,JVy,JVz>"')
 
