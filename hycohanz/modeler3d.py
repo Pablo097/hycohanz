@@ -106,7 +106,7 @@ def create_rectangle(   oEditor,
         The requested name of the object.  If this is not available, HFSS
         will assign a different name, which is returned by this function.
     Flags : str
-        Flags associated with this object.  See HFSS Scripting Guide for details.
+        Flags associated with this object, as "NonModel". See HFSS Scripting Guide for details.
     Color : tuple of length=3
         RGB components of the circle
     Transparency : float between 0 and 1
@@ -553,7 +553,7 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
                                 MaterialValue='"vacuum"',
                                 SolveInside=True,
                                 IsPolylineCovered=True,
-                                IsPolylineClosed=True,
+                                IsPolylineClosed=False,
                                 XSectionBendType="Corner",
                                 XSectionNumSegments="0",
                                 XSectionHeight="0mm",
@@ -582,7 +582,7 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
     Name : str
         Requested name of the polyline
     Flags : str
-        Certain flags that can be set.  See HFSS Scripting Manual for details.
+        Certain flags that can be set, as "NonModel". See HFSS Scripting Manual for details.
     Transparency : float
         Fractional transparency of the object.  0 is opaque, 1 is transparent.
     PartCoordinateSystem : str
@@ -616,89 +616,47 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
     >>> oEditor = hfss.set_active_editor(oDesign, "3D Modeler")
     >>> tri = hfss.create_polyline(oEditor, [0, 1, 0], [0, 0, 1], [0, 0, 0])
     """
-    # Augment the polyline points vector by appending the first element to
-    # the last.  This gives polyline points and N - 1 segments
-    xv = list(x) + [list(x)[0]]
-    yv = list(y) + [list(y)[0]]
-    zv = list(z) + [list(z)[0]]
-
-#    print('xv:  ' + str(xv))
-
-    Npts = len(xv)
-#    print("Npts: " + str(Npts))
-
-#    plpoint = []
+    Npts = len(x)
     polylinepoints = ["NAME:PolylinePoints"]
 
     for n in range(0, Npts):
-        if isinstance(xv[n], str):
-            xpt = xv[n]
-        elif isinstance(xv[n], (float, int)):
-            xpt = str(xv[n]) + "meter"
-        elif isinstance(xv[n], Ex):
-            xpt = xv[n].expr
+        if isinstance(x[n], (str, Ex)):
+            xpt = Ex(x[n]).expr
+        elif isinstance(x[n], (float, int)):
+            xpt = str(x[n]) + "meter"
         else:
-            raise TypeError('xv must be of type str, int, float, or Ex')
+            raise TypeError('x must be of type str, int, float, or Ex')
 
-        if isinstance(yv[n], str):
-            ypt = yv[n]
-        elif isinstance(yv[n], (float, int)):
-            ypt = str(yv[n]) + "meter"
-        elif isinstance(yv[n], Ex):
-            ypt = yv[n].expr
+        if isinstance(y[n], (str, Ex)):
+            ypt = Ex(y[n]).expr
+        elif isinstance(y[n], (float, int)):
+            ypt = str(y[n]) + "meter"
         else:
-            raise TypeError('yv must be of type str, int, float, or Ex')
+            raise TypeError('y must be of type str, int, float, or Ex')
 
-        if isinstance(zv[n], str):
-            zpt = zv[n]
-        elif isinstance(zv[n], (float, int)):
-            zpt = str(zv[n]) + "meter"
-        elif isinstance(zv[n], Ex):
-            zpt = zv[n].expr
+        if isinstance(z[n], (str, Ex)):
+            zpt = Ex(z[n]).expr
+        elif isinstance(z[n], (float, int)):
+            zpt = str(z[n]) + "meter"
         else:
-            raise TypeError('zv must be of type str, int, float, or Ex')
+            raise TypeError('z must be of type str, int, float, or Ex')
 
-#        print('xpt:  ' + str(xpt))
-#        print('ypt:  ' + str(ypt))
-#        print('zpt:  ' + str(zpt))
         polylinepoints.append([["NAME:PLPoint",
                         "X:=", xpt,
                         "Y:=", ypt,
                         "Z:=", zpt]])
 
-#    plpoint[0] = ["NAME:PLPoint", "X:=", "-1mm", "Y:=", "0mm", "Z:=", "0mm"]
-#    plpoint[1] = ["NAME:PLPoint", "X:=", "0mm", "Y:=", "1mm", "Z:=", "0mm"]
-#    plpoint[2] = ["NAME:PLPoint", "X:=", "1mm", "Y:=", "0mm", "Z:=", "0mm"]
-
-#    polylinepoints.append(plpoint)
-#    print(polylinepoints)
-
-##    polylinepoints = ["NAME:PolylinePoints", plpoint[0], plpoint[1], plpoint[2]]
-#    plsegment = []
     polylinesegments = ["NAME:PolylineSegments"]
     if IsPolylineClosed == True:
         Nsegs = Npts - 1
     else:
         Nsegs = Npts - 1
 
-#    print("Nsegs: " + str(Nsegs))
     for n in range(0, Nsegs):
         polylinesegments.append(["NAME:PLSegment",
                                  "SegmentType:=", SegmentType,
                                  "StartIndex:=", n,
                                  "NoOfPoints:=", NoOfPoints])
-
-#    print(plsegment)
-
-#    plsegment1 = ["NAME:PLSegment", "SegmentType:=", "Line", "StartIndex:=", 0, "NoOfPoints:=", 2]
-#    plsegment2 = ["NAME:PLSegment", "SegmentType:=", "Line", "StartIndex:=", 1, "NoOfPoints:=", 2]
-#    plsegment3 = ["NAME:PLSegment", "SegmentType:=", "Line", "StartIndex:=", 2, "NoOfPoints:=", 2]
-
-#    polylinesegments = ["NAME:PolylineSegments", plsegment1, plsegment2, plsegment3]
-
-#    polylinesegments.append(plsegment)
-
-#    print(polylinesegments)
 
     polylinexsection = ["NAME:PolylineXSection",
                         "XSectionType:=", XSectionType,

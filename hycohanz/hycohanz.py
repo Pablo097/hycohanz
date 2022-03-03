@@ -93,13 +93,17 @@ from hycohanz.fieldscalculator import (enter_vol,
                                        calc_op,
                                        clc_eval,
                                        enter_qty,
-                                       get_top_entry_value)
+                                       copy_named_expr_to_stack,
+                                       add_named_expr,
+                                       get_top_entry_value,
+                                       export_on_grid)
 
 from hycohanz.reporter import  (export_to_file,
                                 get_all_report_names,
                                 create_report,
                                 add_traces,
-                                rename_trace)
+                                rename_trace,
+                                change_report_properties)
 
 class App():
     """

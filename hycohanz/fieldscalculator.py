@@ -4,7 +4,7 @@ HFSS Fields Calculator functions. Functions in this module correspond more or
 less to the functions described in the HFSS Scripting Guide, Section "Fields
 Calculator Script Commands".
 
-At last count there were 5 functions implemented out of 28.
+At last count there were 7 functions implemented out of 28.
 """
 
 from __future__ import division, print_function, unicode_literals, absolute_import
@@ -128,7 +128,27 @@ def copy_named_expr_to_stack(oDesign, ExpressionString):
     None
     """
     oFieldsReporter = get_module(oDesign, 'FieldsReporter')
-    return oFieldsReporter.CopyNamedExprToStack(FieldQuantityString)
+    return oFieldsReporter.CopyNamedExprToStack(ExpressionString)
+
+@conf.checkDefaultDesign
+def add_named_expr(oDesign, ExpressionString):
+    """
+    Creates a named expression using the expression at the top of the stack.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS oDesign object upon which to operate.
+    ExpressionString : str
+        The name of the field calculator expression to be created.
+        For example, "My_new_E"
+
+    Returns
+    -------
+    None
+    """
+    oFieldsReporter = get_module(oDesign, 'FieldsReporter')
+    return oFieldsReporter.AddNamedExpr(ExpressionString)
 
 @conf.checkDefaultDesign
 def get_top_entry_value(oDesign, setupname, sweepname, freq, phase, variablesdict):

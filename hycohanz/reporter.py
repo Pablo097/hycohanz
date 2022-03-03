@@ -203,6 +203,57 @@ def rename_trace(oDesign, report_name, trace_name, new_name):
     oModule.RenameTrace(report_name, trace_name, new_name)
 
 @conf.checkDefaultDesign
+def change_report_properties(oDesign,
+                            report_name,
+                            tab_name,
+                            props_path,
+                            props_dict):
+    """
+    Change the properties of a report.
+
+    NOTE: There are too many values for the different parameters depending on
+    which properties are desired to be changed and the type of report, and the
+    HFSS documentation is not very informative about them.
+    The recomendation is to first record an script in HFSS changing the desired
+    properties and then writing them here accordingly.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS oDesign object upon which to operate.
+    reportName : string
+        The name of the report.
+    tab_name : string
+        The name of the main tab where the properties are located.
+        For example: 'General', 'Scaling' or 'Grid'.
+    props_path : string
+        The particular tab where the properties are located.
+        For example: 'General', 'AxisX' or 'PolarGrid'
+    props_dict : Dictionary
+        Dictionary with the property names and their values.
+        For example: {'Min Scale': "-20",
+                      'Max Scale': "20",
+                      'Spacing': "10",
+                      'Auto Scale': False}
+    Returns
+    -------
+    None
+    """
+    oModule = get_module(oDesign, "ReportSetup")
+
+    changedProps_array = ["NAME:ChangedProps"]
+    for key in props_dict:
+        changedProps_array.append(['NAME:'+str(key),
+                                   'Value:=', str(props_dict[key])])
+
+    properties_array = ["NAME:AllTabs",
+                        ["NAME:"+tab_name,
+                         ["NAME:PropServers", report_name+':'+props_path],
+                         [changedProps_array]]]
+
+    oModule.ChangeProperty(properties_array)
+
+@conf.checkDefaultDesign
 def check_setup(oDesign, setup_name):
     """
     Check that SetupName is in the current design. If not raise an exception.
