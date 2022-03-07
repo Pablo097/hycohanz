@@ -16,6 +16,18 @@ from hycohanz.expression import Expression as Ex
 
 warnings.simplefilter('default')
 
+# TODO: Functions that admit list of parts or dictionaries as a way of
+# generalizing for multiple inputs, could check if the input parameters are
+# instead single values and also admit that, in order not to have to create
+# a list for a single input value and that type of things.
+
+# List with possible conductor materials, in order to automatically set the
+# SolveInside flag to False in the corresponding functions. This list should
+# be updated whenever more conductors are needed.
+# Indeed, this list is also visible from outside in order to let the user
+# modify it from the executable scripts.
+conductors_list = ['pec', 'copper', 'silver', 'gold']
+
 @conf.checkDefaultEditor
 def get_matched_object_name(oEditor, name_filter="*"):
     """
@@ -40,7 +52,7 @@ def get_matched_object_name(oEditor, name_filter="*"):
     return list(selections)
 
 @conf.checkDefaultEditor
-def assign_material(oEditor, partlist, MaterialName="vacuum", SolveInside=True):
+def assign_material(oEditor, partlist, MaterialName='vacuum', SolveInside=None):
     """
     Assign a material to the specified objects. Only the MaterialName and
     SolveInside parameters of <AttributesArray> are supported.
@@ -56,8 +68,11 @@ def assign_material(oEditor, partlist, MaterialName="vacuum", SolveInside=True):
     -------
     None
     """
-    if (MaterialName == '"copper"') or (MaterialName == '"pec"'):
-        SolveInside = False
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
 
     selectionsarray = ["NAME:Selections",
                        "Selections:=", ','.join(partlist)]
@@ -82,8 +97,8 @@ def create_rectangle(   oEditor,
                         Transparency=0,
                         PartCoordinateSystem='Global',
                         UDMId='',
-                        MaterialValue='"vacuum"',
-                        SolveInside=True,
+                        MaterialName='vacuum',
+                        SolveInside=None,
                         IsCovered=True):
     """
     Draw a rectangle.
@@ -114,8 +129,7 @@ def create_rectangle(   oEditor,
     PartCoordinateSystem : str
         The name of the coordinate system in which the object is drawn.
     MaterialName : str
-        Name of the material to assign to the object.  Name must be surrounded
-        by double quotes.
+        Name of the material to assign to the object.
     SolveInside : bool
         Whether to mesh the interior of the object and solve for the fields
         inside.
@@ -128,8 +142,11 @@ def create_rectangle(   oEditor,
         The actual name of the created object.
 
     """
-    if (MaterialValue == '"copper"') or (MaterialValue == '"pec"'):
-        SolveInside = False
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
 
     RectangleParameters = [ "NAME:RectangleParameters",
                             "IsCovered:=", IsCovered,
@@ -147,7 +164,7 @@ def create_rectangle(   oEditor,
                     "Transparency:=", Transparency,
                     "PartCoordinateSystem:=", PartCoordinateSystem,
                     "UDMId:=", UDMId,
-                    "MaterialValue:=", MaterialValue,
+                    "MaterialValue:=", '"'+MaterialName+'"',
                     "SolveInside:=", SolveInside]
 
     return oEditor.CreateRectangle(RectangleParameters, Attributes)
@@ -167,8 +184,8 @@ def create_EQbasedcurve(   oEditor,
                         Transparency=0,
                         PartCoordinateSystem='Global',
                         UDMId='',
-                        MaterialValue='"vacuum"',
-                        SolveInside=True):
+                        MaterialName='vacuum',
+                        SolveInside=None):
     """
     Draw an equation based curve.
 
@@ -197,8 +214,7 @@ def create_EQbasedcurve(   oEditor,
     PartCoordinateSystem : str
         The name of the coordinate system in which the object is drawn.
     MaterialName : str
-        Name of the material to assign to the object.  Name must be surrounded
-        by double quotes.
+        Name of the material to assign to the object.
     SolveInside : bool
         Whether to mesh the interior of the object and solve for the fields
         inside.
@@ -209,6 +225,12 @@ def create_EQbasedcurve(   oEditor,
         The actual name of the created object.
 
     """
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
+
     EquationCurveParameters = [ "NAME:EquationBasedCurveParameters",
                             "XtFunction:=", xt,
                             "YtFunction:=", yt,
@@ -225,7 +247,7 @@ def create_EQbasedcurve(   oEditor,
                     "Transparency:=", Transparency,
                     "PartCoordinateSystem:=", PartCoordinateSystem,
                     "UDMId:=", UDMId,
-                    "MaterialValue:=", MaterialValue,
+                    "MaterialValue:=", '"'+MaterialName+'"',
                     "SolveInside:=", SolveInside]
 
     return oEditor.CreateEquationCurve(EquationCurveParameters, Attributes)
@@ -239,8 +261,8 @@ def create_circle(oEditor, xc, yc, zc, radius,
                   Color=(132, 132, 193),
                   Transparency=0,
                   PartCoordinateSystem='Global',
-                  MaterialName='"vacuum"',
-                  SolveInside=True):
+                  MaterialName='vacuum',
+                  SolveInside=None):
     """
     Create a circle primitive.
 
@@ -271,8 +293,7 @@ def create_circle(oEditor, xc, yc, zc, radius,
     PartCoordinateSystem : str
         The name of the coordinate system in which the object is drawn.
     MaterialName : str
-        Name of the material to assign to the object.  Name must be surrounded
-        by double quotes.
+        Name of the material to assign to the object.
     SolveInside : bool
         Whether to mesh the interior of the object and solve for the fields
         inside.
@@ -282,8 +303,11 @@ def create_circle(oEditor, xc, yc, zc, radius,
     str
         The actual name of the created object.
     """
-    if (MaterialName == '"copper"') or (MaterialName == '"pec"'):
-        SolveInside = False
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
 
     circleparams = ["NAME:CircleParameters",
                     "XCenter:=", Ex(xc).expr,
@@ -299,7 +323,7 @@ def create_circle(oEditor, xc, yc, zc, radius,
                        "Color:=", "({r} {g} {b})".format(r=Color[0], g=Color[1], b=Color[2]),
                        "Transparency:=", str(Transparency),
                        "PartCoordinateSystem:=", PartCoordinateSystem,
-                       "MaterialName:=", MaterialName,
+                       "MaterialValue:=", '"'+MaterialName+'"',
                        "Solveinside:=", SolveInside]
 
     return oEditor.CreateCircle(circleparams, attributesarray)
@@ -313,8 +337,8 @@ def create_cylinder(oEditor, xc, yc, zc, radius, height,
                   Color=(132, 132, 193),
                   Transparency=0,
                   PartCoordinateSystem='Global',
-                  MaterialValue='"vacuum"',
-                  SolveInside=True):
+                  MaterialName='vacuum',
+                  SolveInside=None):
     """
     Create a cylinder primitive.
 
@@ -346,9 +370,8 @@ def create_cylinder(oEditor, xc, yc, zc, radius, height,
         Fractional transparency.  0 is opaque and 1 is transparent.
     PartCoordinateSystem : str
         The name of the coordinate system in which the object is drawn.
-    MaterialValue : str
-        Name of the material to assign to the object.  Name must be surrounded
-        by double quotes.
+    MaterialName : str
+        Name of the material to assign to the object.
     SolveInside : bool
         Whether to mesh the interior of the object and solve for the fields
         inside.
@@ -358,8 +381,11 @@ def create_cylinder(oEditor, xc, yc, zc, radius, height,
     str
         The actual name of the created object.
     """
-    if (MaterialValue == '"copper"') or (MaterialValue == '"pec"'):
-        SolveInside = False
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
 
     cylinderparams = ["NAME:CylinderParameters",
                     "XCenter:=", Ex(xc).expr,
@@ -367,8 +393,8 @@ def create_cylinder(oEditor, xc, yc, zc, radius, height,
                     "ZCenter:=", Ex(zc).expr,
                     "Radius:=", Ex(radius).expr,
                     "Height:=", Ex(height).expr,
-                    "WhichAxis:=", str(WhichAxis),
-                    "NumSides:=", str(NumSides)]
+                    "WhichAxis:=", Ex(WhichAxis).expr,
+                    "NumSides:=", Ex(NumSides).expr]
 
     attributesarray = ["NAME:Attributes",
                        "Name:=", Name,
@@ -377,7 +403,7 @@ def create_cylinder(oEditor, xc, yc, zc, radius, height,
                        "Transparency:=", str(Transparency),
                        "PartCoordinateSystem:=", PartCoordinateSystem,
                        "UDMId:=", "",
-                       "MaterialValue:=", MaterialValue,
+                       "MaterialValue:=", '"'+MaterialName+'"',
                        "SurfaceMaterialValue:=", '""',
                        "Solveinside:=", SolveInside,
                        "IsMaterialEditable:=", True,
@@ -394,8 +420,8 @@ def create_sphere(oEditor, x, y, z, radius,
                   Transparency=0,
                   PartCoordinateSystem="Global",
                   UDMId="",
-                  MaterialValue='"vacuum"',
-                  SolveInside=True):
+                  MaterialName='vacuum',
+                  SolveInside=None):
     """
     Create a sphere primitive.
 
@@ -424,7 +450,7 @@ def create_sphere(oEditor, x, y, z, radius,
         The name of the coordinate system in which the object is drawn.
     UDMId : str
         Unknown use.  See HFSS documentation for explanation.
-    MaterialValue : str
+    MaterialName : str
         Name of the material to assign to the object
     SolveInside : bool
         Whether to mesh the interior of the object and solve for the fields
@@ -436,8 +462,11 @@ def create_sphere(oEditor, x, y, z, radius,
         The actual name assigned by HFSS to the part.
 
     """
-    if (MaterialValue == '"copper"') or (MaterialValue == '"pec"'):
-        SolveInside = False
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
 
     sphereparametersarray = ["NAME:SphereParameters",
                              "XCenter:=", Ex(x).expr,
@@ -452,7 +481,7 @@ def create_sphere(oEditor, x, y, z, radius,
                        "Transparency:=", Transparency,
                        "PartCoordinateSystem:=", PartCoordinateSystem,
                        "UDMId:=", UDMId,
-                       "MaterialValue:=", MaterialValue,
+                       "MaterialValue:=", '"'+MaterialName+'"',
                        "SolveInside:=", SolveInside]
 
     part = oEditor.CreateSphere(sphereparametersarray, attributesarray)
@@ -473,8 +502,8 @@ def create_box( oEditor,
                 Transparency=0,
                 PartCoordinateSystem='Global',
                 UDMId='',
-                MaterialValue='"vacuum"',
-                SolveInside=True,
+                MaterialName='vacuum',
+                SolveInside=None,
                 IsCovered=True,
                 ):
     """
@@ -506,8 +535,7 @@ def create_box( oEditor,
     PartCoordinateSystem : str
         The name of the coordinate system in which the object is drawn.
     MaterialName : str
-        Name of the material to assign to the object.  Name must be surrounded
-        by double quotes.
+        Name of the material to assign to the object.
     SolveInside : bool
         Whether to mesh the interior of the object and solve for the fields
         inside.
@@ -520,8 +548,11 @@ def create_box( oEditor,
         The actual name of the created object.
 
     """
-    if (MaterialValue == '"copper"') or (MaterialValue == '"pec"'):
-        SolveInside = False
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
 
     BoxParameters = [ "NAME:BoxParameters",
                     "XPosition:=", Ex(xpos).expr,
@@ -538,7 +569,7 @@ def create_box( oEditor,
                     "Transparency:=", Transparency,
                     "PartCoordinateSystem:=", PartCoordinateSystem,
                     "UDMId:=", UDMId,
-                    "MaterialValue:=", MaterialValue,
+                    "MaterialValue:=", '"'+MaterialName+'"',
                     "SolveInside:=", SolveInside]
 
     return oEditor.CreateBox(BoxParameters, Attributes)
@@ -550,8 +581,8 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
                                 Transparency=0,
                                 PartCoordinateSystem="Global",
                                 UDMId="",
-                                MaterialValue='"vacuum"',
-                                SolveInside=True,
+                                MaterialName='vacuum',
+                                SolveInside=None,
                                 IsPolylineCovered=True,
                                 IsPolylineClosed=False,
                                 XSectionBendType="Corner",
@@ -566,7 +597,6 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
     """
     Draw a polyline.
 
-    Warning:  HFSS apparently throws an exception whenever IsPolylineClosed=False
     Warning:  HFSS 13 crashes when you click on the last segment in the model tree.
 
     Parameters
@@ -589,7 +619,7 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
         Coordinate system to use in constructing the object.
     UDMId : str
         TODO:  Add documentation here.
-    MaterialValue : str
+    MaterialName : str
         Name of the material to assign to the object.
     SolveInside : bool
         Whether fields are computed inside the object.
@@ -616,6 +646,12 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
     >>> oEditor = hfss.set_active_editor(oDesign, "3D Modeler")
     >>> tri = hfss.create_polyline(oEditor, [0, 1, 0], [0, 0, 1], [0, 0, 0])
     """
+    if SolveInside == None:
+        if MaterialName in conductors_list:
+            SolveInside = False
+        else:
+            SolveInside = True
+
     Npts = len(x)
     polylinepoints = ["NAME:PolylinePoints"]
 
@@ -681,7 +717,7 @@ def create_polyline(oEditor, x, y, z, Name="Polyline1",
                        "Transparency:=", Transparency,
                        "PartCoordinateSystem:=", PartCoordinateSystem,
                        "UDMId:=", UDMId,
-                       "MaterialValue:=", MaterialValue,
+                       "MaterialValue:=", '"'+MaterialName+'"',
                        "SolveInside:=",  SolveInside]
 
     polyname = oEditor.CreatePolyline(polylineparams, polylineattribs)
@@ -1502,6 +1538,61 @@ def uncover_faces(oEditor, partlist, dictoffacelists):
     print('uncoverparametersarray:  {s}'.format(s=uncoverparametersarray))
 
     oEditor.UncoverFaces(selectionsarray, uncoverparametersarray)
+
+@conf.checkDefaultEditor
+def create_object_from_faces(oEditor, partlist, dictoffacelists, create_groups_flag=False):
+    """
+    Creates 2D objects from specified face(s).
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    partlist : list or single string
+        List of part name strings from which new objects will be created from
+        their corresponding faces.
+    dictoffacelists : dict
+        Dict containing part names as the keys, and lists of integer face
+        ids as the values. It also admits a single list or even single integer
+        if only one part is being used.
+    create_groups_flag : boolean
+        Flag indicating if new objects should be in a group or not
+
+    Returns
+    -------
+    None
+    """
+    is_partlist_list = isinstance(partlist, list)
+    is_dictoffacelists_dict = isinstance(dictoffacelists, dict)
+    if is_partlist_list and not is_dictoffacelists_dict:
+        raise Exception("dictoffacelists must be a dictionary when partlist is a list.")
+
+    selectionsarray = ["NAME:Selections", "Selections:="]
+    if is_partlist_list:
+        selectionsarray += [','.join(partlist)]
+    else:
+        selectionsarray += [partlist]
+    selectionsarray += ["NewPartsModelFlag:=", "Model"]
+
+    parametersarray = ["NAME:Parameters"]
+    if is_dictoffacelists_dict:
+        for part in partlist:
+            facelist = dictoffacelists[part]
+            if not isinstance(facelist, list):
+                facelist = [facelist]
+            parametersarray += [["NAME:BodyFromFaceToParameters",
+                                 "FacesToDetach:=", facelist]]
+    elif isinstance(dictoffacelists, list):
+        parametersarray += [["NAME:BodyFromFaceToParameters",
+                             "FacesToDetach:=", dictoffacelists]]
+    elif isinstance(dictoffacelists, int):
+        parametersarray += [["NAME:BodyFromFaceToParameters",
+                             "FacesToDetach:=", [dictoffacelists]]]
+    else:
+        raise Exception("dictoffacelists must be either a dictionary, a list or an integer.")
+
+    oEditor.CreateObjectFromFaces(selectionsarray, parametersarray,
+                            ["CreateGroupsForNewObjects:=", create_groups_flag])
 
 @conf.checkDefaultEditor
 def connect(oEditor, partlist):
