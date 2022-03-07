@@ -75,6 +75,18 @@ In case you don´t already have Python installed, you can download it from here_
 
 .. _here: https://www.python.org/downloads/
 
+Alternatively, if you are not interested in having a local copy of the project, the library can be installed 
+without downloading it manually, simply executing the following command in any Windows command shell prompt::
+    > pip install https://github.com/Pablo097/hycohanz/archive/devel.zip
+    
+Updating
+--------
+
+In order to update your local library installation with newer available versions, you can either re-download 
+the project and follow the three-step process from the previous section, or execute the following command in 
+a command shell prompt::
+    > pip install --force-reinstall --no-deps https://github.com/Pablo097/hycohanz/archive/devel.zip
+
 Problems, Bugs, Questions, and Feature Requests
 -----------------------------------------------
 These are currently handled via the hycohanz issue tracker https://github.com/mradway/hycohanz/issues.
