@@ -24,7 +24,7 @@ input('Press "Enter" to insert some circle properties into the design.>')
 hfss.add_property(oDesign, "xcenter", hfss.Expression("1m"))
 hfss.add_property(oDesign, "ycenter", hfss.Expression("2m"))
 hfss.add_property(oDesign, "zcenter", hfss.Expression("3m"))
-hfss.add_property(oDesign, "diam", hfss.Expression("1m"))
+hfss.add_property(oDesign, "diameter", hfss.Expression("1m"))
 
 input('Press "Enter" to draw a circle using the properties.>')
 

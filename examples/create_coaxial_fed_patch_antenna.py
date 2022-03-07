@@ -14,7 +14,7 @@ lambda_res = c0/freq_res
 # Variables can be declared as floats in SI units, as in the following lines
 ## SMA coaxial connector dimensions
 OuterCoaxRadius = 2.05*1e-3				# m
-materialSubstrateCoax = '"Teflon (tm)"'
+materialSubstrateCoax = "Teflon (tm)"
 coaxPermittivity = 2.1					# Teflon permittivity
 Z0 = 47.5                   			# ohms
 # Calculate coaxial inner radius from outer radius, Z0 and permittivity
@@ -28,7 +28,7 @@ thicknessOuterConductor = 180*1e-6		# m
 ## Patch dimensions
 thicknessSubstrate = Ex("30mils")	# mils
 SubstrateSize = Ex("20mm")			# mm
-materialSubstratePatch = '"Rogers RO4350 (tm)"'
+materialSubstratePatch = "Rogers RO4350 (tm)"
 thicknessPatch = Ex("180um")		# um
 L = Ex("4.78mm")                   	# mm
 W = Ex("7.02mm")                   	# mm
@@ -56,44 +56,44 @@ input('Press <Enter> to save the required variables in HFSS.')
 # It is very convenient to have HFSS variables in order to be able to change
 # them afterwards in our design.
 # For example, the following function creates an HFSS variable called
-# 'FedDealignment' with the value inside the Python 'FedDealignment' variable,
-# i.e. "1.31mm"
-hfss.add_property("FedDealignment", FedDealignment)
-hfss.add_property("SubstrateSize", SubstrateSize)
-hfss.add_property("thicknessSubstrate", thicknessSubstrate)
-hfss.add_property("W", W)
-hfss.add_property("L", L)
+# 'LengthCoaxial' with the value inside the Python 'LengthCoax' variable (5*1e-3)
+LengthCoax = hfss.add_property("LengthCoaxial", LengthCoax)
+# This function also admits strings or hycohanz Expressions as the variable value
+thicknessSubstrate = hfss.add_property("thicknessSubstrate", thicknessSubstrate)
+# In addition, properties can also be created in a 'bundle' way, creating
+# several variables at once, which is more compact
+[SubstrateSize, thicknessPatch, FedDealignment, W, L] = hfss.add_property(
+		["SubstrateSize", "thicknessPatch", "FedDealignment", "W", "L"],
+		[SubstrateSize, thicknessPatch, FedDealignment, W, L])
 
-# If the numeric values of these variables are not necessary anymore, we can
-# assign them the HFSS expression with the already created HFSS variable. Thus,
-# from now on, every time we use one of these variables for any hycohanz
-# function, it will leave the required value as an HFSS expression
-FedDealignment = Ex("FedDealignment")
-SubstrateSize = Ex("SubstrateSize")
-thicknessSubstrate = Ex("thicknessSubstrate")
-W = Ex("W")
-L = Ex("L")
+"""
+If the numeric values of these variables are not necessary anymore, we can
+assign them the HFSS expression with the already created HFSS variable, which
+is what the function 'add_property' returns. This assignations are equivalent to:
+# LengthCoax = Ex("LengthCoaxial")
+# thicknessSubstrate = Ex("thicknessSubstrate")
+# SubstrateSize = Ex("SubstrateSize")
+  etc...
+Thus, from now on, every time we use one of these variables for any hycohanz
+function, it will leave the required value as an HFSS expression.
+"""
 
-# The same can be done with the required numeric variables
-hfss.add_property("LengthCoax", LengthCoax)
-hfss.add_property("thicknessPatch", thicknessPatch)
-LengthCoax = Ex("LengthCoax")
-thicknessPatch = Ex("thicknessPatch")
+"""
+The good thing about the hycohanz Expressions is that they can be manipulated
+in Python as if they were numeric values, i.e. you can add, subtract, multiply
+divide, etc with another hycohanz Expression or any numeric value and it will
+return a new hycohanz Expression with the correct equation.
 
-# The good thing about the hycohanz Expressions is that they can be manipulated
-# in Python as if they were numeric values, i.e. you can add, subtract, multiply
-# divide, etc with another hycohanz Expression or any numeric value and it will
-# return a new hycohanz Expression with the correct equation.
-#
-# For example, if we do the following:
-# >> A = LengthCoax + thicknessSubstrate/2
-# 'A' will be a hycohanz Expression with the following string:
-# >> A: "5*1e-3 + thicknessSubstrate/2"
-# which HFSS will recognize correctly. This way, you don´t have to worry about
-# whether you are operating with expressions or numeric values in Python, as
-# any hycohanz Expression in the operation will convert all to another expression,
-# which is a valid input to any hfss function.
-
+For example, if we do the following:
+>>> A = LengthCoax + thicknessSubstrate/2
+>>> A
+	"5*1e-3 + thicknessSubstrate/2"
+'A' is a hycohanz Expression with the string above, which HFSS will recognize
+correctly. This way, you don't have to worry about whether you are operating
+with expressions or numeric values in Python, as any hycohanz Expression in
+the operation will convert all to another expression, which is a valid input
+to any hycohanz function.
+"""
 
 input('Press <Enter> to create the GND plane.')
 
@@ -112,14 +112,14 @@ input('Press <Enter> to create the substrate.')
 ## Create substrate Plane
 hfss.create_box(-SubstrateSize/2, -SubstrateSize/2, 0,
 				SubstrateSize, SubstrateSize, thicknessSubstrate,
-				MaterialValue = materialSubstratePatch, Name="SubstratePlane",
+				MaterialName = materialSubstratePatch, Name="SubstratePlane",
 				Transparency = 0.7)
 
 input('Press <Enter> to create the patch.')
 
 ## Create Patch
 hfss.create_box(-W/2, -L/2, thicknessSubstrate,
-				W, L, thicknessPatch, MaterialValue = '"copper"', Name="Patch",
+				W, L, thicknessPatch, MaterialName = "copper", Name="Patch",
 				Transparency = 0.1, Color=(200,143,14))
 
 input('Press <Enter> to create the coaxial cable and probe.')
@@ -131,7 +131,7 @@ hfss.subtract(["GNDPlane"], ["GNDHole"])
 ## Create Coaxial exterior conductive layer
 hfss.create_cylinder(0, -FedDealignment, -LengthCoax,
 					OuterCoaxRadius+thicknessOuterConductor, LengthCoax,
-					MaterialValue='"pec"', Name="Coaxial")
+					MaterialName="pec", Name="Coaxial")
 hfss.create_cylinder(0, -FedDealignment, -LengthCoax,
 					OuterCoaxRadius, LengthCoax, Name="CoaxialErase")
 hfss.subtract(["Coaxial"], ["CoaxialErase"])
@@ -139,7 +139,7 @@ hfss.subtract(["Coaxial"], ["CoaxialErase"])
 ## Create Coaxial substrate
 hfss.create_cylinder(0, -FedDealignment, -LengthCoax,
 					OuterCoaxRadius, LengthCoax,
-					MaterialValue=materialSubstrateCoax, Name="CoaxialInterior")
+					MaterialName=materialSubstrateCoax, Name="CoaxialInterior")
 hfss.create_cylinder(0, -FedDealignment, -LengthCoax,
 					innerCoaxRadius, LengthCoax, Name="CoaxialInteriorErase")
 hfss.subtract(["CoaxialInterior"], ["CoaxialInteriorErase"])
@@ -147,12 +147,12 @@ hfss.subtract(["CoaxialInterior"], ["CoaxialInteriorErase"])
 ## Create Coaxial core
 hfss.create_cylinder(0, -FedDealignment, -LengthCoax,
 					innerCoaxRadius, LengthCoax,
-					MaterialValue='"pec"', Name="CoaxialCore")
+					MaterialName="pec", Name="CoaxialCore")
 
 ## Create Coaxial probe
 hfss.create_cylinder(0, -FedDealignment, 0,
 					innerCoaxRadius, thicknessSubstrate,
-					MaterialValue='"pec"', Name="CoaxialProbe")
+					MaterialName="pec", Name="CoaxialProbe")
 # Subtract coaxial probe from Substrate Plane
 hfss.subtract(["SubstratePlane"], ["CoaxialProbe"], KeepOriginals=True)
 
