@@ -10,12 +10,13 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 import warnings
 
 import hycohanz.conf as conf
+from hycohanz.expression import Expression as Ex
 from hycohanz.desktop import get_active_project
 
 warnings.simplefilter('default')
 
-@conf.checkDefaultDesktop
-def add_material(oDesktop,
+@conf.checkDefaultProject
+def add_material(oProject,
                 material_name,
                 rel_permittivity=1,
                 rel_permeability =1,
@@ -31,18 +32,18 @@ def add_material(oDesktop,
 
     Parameters
     ----------
-    oDesktop : pywin32 COMObject
-        HFSS Desktop object.
+    oProject : pywin32 COMObject
+        HFSS Project object.
     material_name : str
         Name of the added material.
-    rel_permittivity : float
-    rel_permeability : float
-    cond : float
-    diel_loss_tan : float
-    mag_loss_tan : float
-    mag_saturation : float
-    lande_g : float
-    delta_h : float
+    rel_permittivity : float or hycohanz Expression
+    rel_permeability : float or hycohanz Expression
+    cond : float or hycohanz Expression
+    diel_loss_tan : float or hycohanz Expression
+    mag_loss_tan : float or hycohanz Expression
+    mag_saturation : float or hycohanz Expression
+    lande_g : float or hycohanz Expression
+    delta_h : float or hycohanz Expression
         The relative permittivity, relative permeability, electric
         conductivity, dielectric loss tangent, magnetic loss tangent,
         magnetic saturation, Lande G factor, and delta_h associated with
@@ -56,21 +57,20 @@ def add_material(oDesktop,
     #### each of the material characteristics, assuming these would mean
     #### that characteristic is anisotropic with each of the 3 values for x,y,z
     """
-    oProject = get_active_project(oDesktop)
     if does_material_exist(oProject,material_name):
         msg = material_name + " already exists in the local library. No material was created"
         warnings.warn(msg)
         return msg
     else:
         mat_param = ["NAME:"+material_name,
-                    "permittivity:=", rel_permittivity,
-                    "permeability:=", rel_permeability,
-                    "conductivity:=", cond,
-                    "dielectric_loss_tangent:=", diel_loss_tan,
-                    "magnetic_loss_tangent:=", mag_loss_tan,
-                    "saturation_mag:=", mag_saturation,
-                    "lande_g_factor:=", lande_g,
-                    "delta_H:=", delta_h]
+                    "permittivity:=", Ex(rel_permittivity).expr,
+                    "permeability:=", Ex(rel_permeability).expr,
+                    "conductivity:=", Ex(cond).expr,
+                    "dielectric_loss_tangent:=", Ex(diel_loss_tan).expr,
+                    "magnetic_loss_tangent:=", Ex(mag_loss_tan).expr,
+                    "saturation_mag:=", Ex(mag_saturation).expr,
+                    "lande_g_factor:=", Ex(lande_g).expr,
+                    "delta_H:=", Ex(delta_h).expr]
         oDefinitionManager = oProject.GetDefinitionManager()
         return oDefinitionManager.AddMaterial(mat_param)
 
@@ -81,8 +81,8 @@ def does_material_exist(oProject,material_name):
 
     Parameters
     ----------
-    oDesktop : pywin32 COMObject
-        HFSS Desktop object.
+    oProject : pywin32 COMObject
+        HFSS Project object.
 
     Returns
     -------
