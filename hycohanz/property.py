@@ -25,7 +25,7 @@ constants_dict = {'c0': str(float(Quantity('c'))),
                   'pi': str(math.pi)}
 
 @conf.checkDefaultDesign
-def add_properties(oDesign, name, value):
+def add_property(oDesign, name, value):
     """
     Add design and/or project properties.
     If the variable contains '$', then the variable is global (project);
@@ -35,16 +35,24 @@ def add_properties(oDesign, name, value):
     ----------
     oDesign : pywin32 COMObject
         The HFSS design from which to retrieve the module.
-    name : list of str
+    name : single str or list of them
         The name of the properties to add.
-    value : list of Hyphasis Expression object
+    value : single float or hycohanz Expression object or list of them
         The values of the properties.
 
     Returns
     -------
-    None
+    List of hycohanz Expressions of the created variables,
+    or single Expression if only one variable is created
 
     """
+    if not isinstance(name, list):
+        name = [name]
+        value = [value]
+        single_value_flag = True
+    else:
+        single_value_flag = False
+
     # Separate variables in project and design ones
     project_varname_list = list()
     project_varvalue_list = list()
@@ -97,28 +105,10 @@ def add_properties(oDesign, name, value):
         oProject = get_active_project()
         oProject.ChangeProperty(["NAME:AllTabs", proptabarray])
 
-@conf.checkDefaultDesign
-def add_property(oDesign, name, value):
-    """
-    Add a property.
-    If the variable contains '$', then the variable is global (project);
-    otherwise, it is assumed to be a local variable (design).
-
-    Parameters
-    ----------
-    oDesign : pywin32 COMObject
-        The HFSS design from which to retrieve the module.
-    name : str
-        The name of the property to add.
-    value : Hyphasis Expression object
-        The value of the property.
-
-    Returns
-    -------
-    None
-
-    """
-    add_properties(oDesign, [name], [value])
+    if single_value_flag:
+        return Expression(name[0])
+    else:
+        return [Expression(varName) for varName in name]
 
 @conf.checkDefaultDesign
 def set_variable(oDesign, name, value):

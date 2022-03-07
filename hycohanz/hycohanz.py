@@ -54,7 +54,6 @@ from hycohanz.project import (get_project_name,
                               )
 
 from hycohanz.property import ( constants_dict,
-                                add_properties,
                                 add_property,
                                 set_variable,
                                 get_variables,
