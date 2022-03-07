@@ -10,14 +10,26 @@ from __future__ import division, print_function, unicode_literals, absolute_impo
 
 import hycohanz.conf as conf
 from hycohanz.expression import Expression
+from hycohanz.desktop import get_active_project
 import re
 import math
 from quantiphy import Quantity
 
+# Dictionary with HFSS constant names and their corresponding values. This
+# dictionary should be updated whenever more constants are needed.
+# Indeed, this dictionary is also visible from outside in order to let the user
+# modify it from the executable scripts.
+constants_dict = {'c0': str(float(Quantity('c'))),
+                  'e0': str(float(Quantity('eps0'))),
+                  'u0': str(float(Quantity('mu0'))),
+                  'pi': str(math.pi)}
+
 @conf.checkDefaultDesign
 def add_properties(oDesign, name, value):
     """
-    Add design properties.
+    Add design and/or project properties.
+    If the variable contains '$', then the variable is global (project);
+    otherwise, it is assumed to be a local variable (design).
 
     Parameters
     ----------
@@ -33,29 +45,64 @@ def add_properties(oDesign, name, value):
     None
 
     """
-    propserversarray = ["NAME:PropServers", "LocalVariables"]
-
-    newpropsarray = ["NAME:NewProps"]
-
-    for n in range(len(name)):
-        if isinstance(value[n], list):
-            valueAux = '['+','.join([Expression(i).expr for i in value[n]])+']'
+    # Separate variables in project and design ones
+    project_varname_list = list()
+    project_varvalue_list = list()
+    design_varname_list = list()
+    design_varvalue_list = list()
+    for index in range(0,len(name)):
+        if name[index][0] == '$':
+            project_varname_list.append(name[index])
+            project_varvalue_list.append(value[index])
         else:
-            valueAux = Expression(value[n]).expr
+            design_varname_list.append(name[index])
+            design_varvalue_list.append(value[index])
 
-        newpropsarray.append(["NAME:" + name[n],
-                           "PropType:=", "VariableProp",
-                           "UserDef:=", True,
-                           "Value:=", valueAux])
+    # For local variables
+    if design_varname_list:
+        propserversarray = ["NAME:PropServers", "LocalVariables"]
+        newpropsarray = ["NAME:NewProps"]
 
-    proptabarray = ["NAME:LocalVariableTab", propserversarray, newpropsarray]
+        for n in range(len(design_varname_list)):
+            if isinstance(design_varvalue_list[n], list):
+                valueAux = '['+','.join([Expression(i).expr for i in design_varvalue_list[n]])+']'
+            else:
+                valueAux = Expression(design_varvalue_list[n]).expr
 
-    oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
+            newpropsarray.append(["NAME:" + design_varname_list[n],
+                               "PropType:=", "VariableProp",
+                               "UserDef:=", True,
+                               "Value:=", valueAux])
+
+        proptabarray = ["NAME:LocalVariableTab", propserversarray, newpropsarray]
+        oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
+
+    # For local variables
+    if project_varname_list:
+        propserversarray = ["NAME:PropServers", "ProjectVariables"]
+        newpropsarray = ["NAME:NewProps"]
+
+        for n in range(len(project_varname_list)):
+            if isinstance(project_varvalue_list[n], list):
+                valueAux = '['+','.join([Expression(i).expr for i in project_varvalue_list[n]])+']'
+            else:
+                valueAux = Expression(project_varvalue_list[n]).expr
+
+            newpropsarray.append(["NAME:" + project_varname_list[n],
+                               "PropType:=", "VariableProp",
+                               "UserDef:=", True,
+                               "Value:=", valueAux])
+
+        proptabarray = ["NAME:ProjectVariableTab", propserversarray, newpropsarray]
+        oProject = get_active_project()
+        oProject.ChangeProperty(["NAME:AllTabs", proptabarray])
 
 @conf.checkDefaultDesign
 def add_property(oDesign, name, value):
     """
-    Add a design property.
+    Add a property.
+    If the variable contains '$', then the variable is global (project);
+    otherwise, it is assumed to be a local variable (design).
 
     Parameters
     ----------
@@ -73,17 +120,17 @@ def add_property(oDesign, name, value):
     """
     add_properties(oDesign, [name], [value])
 
-@conf.checkDefaultProject
-def set_variable(oProject, name, value):
+@conf.checkDefaultDesign
+def set_variable(oDesign, name, value):
     """
-    Change a design property.  This function differs significantly from
-    SetVariableValue() in that it makes the reasonable assumption that
-    if the variable contains '$', then the variable is global; otherwise,
-    it is assumed to be a local variable.
+    Change a design property.
+    This function differs significantly from SetVariableValue() in that it
+    makes the reasonable assumption that if the variable contains '$', then
+    the variable is global; otherwise, it is assumed to be a local variable.
 
     Parameters
     ----------
-    oProject : pywin32 COMObject
+    oDesign : pywin32 COMObject
         The HFSS design from which to retrieve the module.
     name : str
         The name of the property/variable to edit.
@@ -95,21 +142,21 @@ def set_variable(oProject, name, value):
     None
 
     """
-    if '$' in name:
+    if name[0] == '$':
+        oProject = get_active_project()
         oProject.SetVariableValue(name,Expression(value).expr)
     else:
-        oDesign = oProject.GetActiveDesign()
         oDesign.SetVariableValue(name,Expression(value).expr)
 
 @conf.checkDefaultProject
 def get_variables(oProject,oDesign=''):
     """
-    get list of non-indexed variables.
+    Get list of non-indexed variables.
 
     Parameters
     ----------
     oProject : pywin32 COMObject
-        The HFSS design from which to retrieve the variables.
+        The HFSS project from which to retrieve the variables.
     oDesign : pywin32 COMObject
         Optional, if specified function returns variable list of oDesign.
 
@@ -129,12 +176,14 @@ def get_variables(oProject,oDesign=''):
 @conf.checkDefaultDesign
 def get_variable_value(oDesign,varName):
     """
-    get the value of a variable.
+    Get the value of a variable.
+    if the variable contains '$', then the variable is global; otherwise,
+    it is assumed to be a local variable.
 
     Parameters
     ----------
     oDesign : pywin32 COMObject
-        The HFSS design from which to retrieve the variable.
+        The HFSS design from which to retrieve the variables.
     varName : str
         string with the name of the variable
 
@@ -144,7 +193,11 @@ def get_variable_value(oDesign,varName):
     string representing the value of the variable
 
     """
-    return oDesign.GetVariableValue(Expression(varName).expr)
+    if varName[0] == '$':
+        oProject = get_active_project()
+        return oProject.GetVariableValue(Expression(varName).expr)
+    else:
+        return oDesign.GetVariableValue(Expression(varName).expr)
 
 @conf.checkDefaultDesign
 def expand_expression(oDesign, exprValue):
@@ -175,19 +228,21 @@ def expand_expression(oDesign, exprValue):
     """
     str1 = Expression(exprValue).expr
     # print('Expresion a sustituir: '+str1)
-    variablelist = re.findall(r'\b[a-zA-Z]\w*', str1)
+    variablelist = re.findall(r'\$?\b[a-zA-Z]\w*', str1)
     # print(variablelist)
     if len(variablelist) > 0:
     	for variable in variablelist:
     		# print('Variable a sustituir: '+variable)
-            if variable=="c0":
-                str1 = str1.replace(variable, str(float(Quantity('c'))))
-            elif variable=="e0":
-                str1 = str1.replace(variable, str(float(Quantity('eps0'))))
-            elif variable=="u0":
-                str1 = str1.replace(variable, str(float(Quantity('mu0'))))
-            elif variable=="pi":
-                str1 = str1.replace(variable, str(math.pi))
+            if variable in constants_dict:
+                str1 = str1.replace(variable, constants_dict[variable])
+            # if variable=="c0":
+            #     str1 = str1.replace(variable, str(float(Quantity('c'))))
+            # elif variable=="e0":
+            #     str1 = str1.replace(variable, str(float(Quantity('eps0'))))
+            # elif variable=="u0":
+            #     str1 = str1.replace(variable, str(float(Quantity('mu0'))))
+            # elif variable=="pi":
+            #     str1 = str1.replace(variable, str(math.pi))
             else:
                 str2 = get_variable_value(oDesign, variable)
                 # print('De HFSS: '+variable+' = '+str2)
