@@ -7,6 +7,13 @@ hycohanz simplifies control of HFSS from Python for RF, microwave, and antenna e
 
 .. _hycohanz:  http://mradway.github.io/hycohanz/
 
+DISCONTINUATION NOTICE
+----------------------
+
+hycohanz will probably be discontinued soon, as an official Python library for Ansys products already exists, called **PyAnsys**. Its website https://docs.pyansys.com/ contains documentation about it, the projects are open-source and the code for the AEDT-related library (PyAEDT) can be found `here <https://github.com/pyansys/pyaedt>`_. This official library is much more complete, pythonic and supported than hycohanz will ever be, so it is recommended to use PyAEDT instead.
+
+Even so, if you find this library easier to use for your project and you would like any lacking HFSS function or improvement to be implemented, feel free to post it in the `issue tracker <https://github.com/Pablo097/hycohanz/issues>`_ and I will try to implement it as soon as possible.
+
 Minimal Example
 ---------------
 
@@ -89,7 +96,7 @@ a command shell prompt::
 
 Problems, Bugs, Questions, and Feature Requests
 -----------------------------------------------
-These are currently handled via the hycohanz issue tracker https://github.com/mradway/hycohanz/issues.
+These are currently handled via the hycohanz issue tracker https://github.com/Pablo097/hycohanz/issues.
 
 This issue tracker is useful if you
 
@@ -100,7 +107,7 @@ This issue tracker is useful if you
 
 Of course, you can also email_ me privately.
 
-.. _email:  mailto:mradway@gmail.com
+.. _email:  mailto:pablomr@ic.uma.es
 
 Features
 --------
