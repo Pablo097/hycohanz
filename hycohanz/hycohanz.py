@@ -84,9 +84,8 @@ from hycohanz.boundarysetup import (assign_perfect_e,
                                     assign_radiation,
                                     assign_perfect_h,
                                     assign_anisotropic_impedance,
-                                    assign_waveport_multimode,
-                                    assign_waveport_intline,
-                                    assign_lumpedport_intline,
+                                    assign_waveport,
+                                    assign_lumpedport,
                                     )
 
 from hycohanz.fieldscalculator import (enter_vol,
