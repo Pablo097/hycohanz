@@ -95,7 +95,8 @@ from hycohanz.fieldscalculator import (enter_vol,
                                        copy_named_expr_to_stack,
                                        add_named_expr,
                                        get_top_entry_value,
-                                       export_on_grid)
+                                       export_on_grid,
+                                       create_field_plot)
 
 from hycohanz.reporter import  (export_to_file,
                                 get_all_report_names,

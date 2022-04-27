@@ -258,6 +258,98 @@ def export_on_grid(oDesign,
                             setupName, variablesarray,
                             includePoints, coordType, offsetCoord)
 
+@conf.checkDefaultDesign
+def create_field_plot(oDesign,
+                    setupName,
+                    solutionType,
+                    quantityName,
+                    freq,
+                    phase = 0,
+                    objectsList = [],
+                    facesList = [],
+                    linesList = [],
+                    pointsList = [],
+                    isNonModel = False,
+                    plotFolder = 'Script_Gen',
+                    ):
+    """
+    Creates a field plot for the given quantity in the objects, faces, lines
+    and/or points specified.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS oDesign object upon which to operate.
+    setupName : str
+        Name of HFSS setup to use, for example "Setup1"
+    solutionType : str
+        Name of setup solution type ('Adaptive', 'LastAdaptive', 'Sweep'...)
+    quantityName : str
+        Name of the quantity to plot ('Mag_E', 'Mag_Jsurf'...)
+    freq : float
+        Frequency at which to evaluate the calculator expression (in Hz).
+    phase : float
+        Phase in degrees at which to evaluate the calculator expression.
+    objectsList :
+    facesList :
+    linesList :
+    pointsList : list of strings
+        List of objects, face IDs, lines and points names in which to plot the
+        fields. At least one list must have, at least, one string.
+    isNonModel : boolean
+        Flag that indicates whether the 3D objects are part of the simulated
+        model or not. This function won't work if a NonModel object is passed
+        and this flag is not set.
+
+    Returns
+    -------
+    None
+    """
+    intrinsicVar = f"Freq='{freq/1e9}GHz' Phase='{phase}deg'"
+    numGeom = 0
+    GeomTypesData = []
+    if objectsList:
+        numGeom += 1
+        numObjects = len(objectsList)
+        GeomTypesData += ["Volume", 'NonModelSolid' if isNonModel else 'ObjList', numObjects]
+        GeomTypesData += objectsList
+    if facesList:
+        numGeom += 1
+        numFaces = len(facesList)
+        GeomTypesData += ["Surface", 'NonModelFaceList' if isNonModel else 'FacesList', numFaces]
+        GeomTypesData += [str(faceID) for faceID in facesList]
+    if linesList:
+        numGeom += 1
+        numLines = len(linesList)
+        GeomTypesData += ["Line", numLines]
+        GeomTypesData += facesList
+    if pointsList:
+        numGeom += 1
+        numPoints = len(pointsList)
+        GeomTypesData += ["Point", numPoints]
+        GeomTypesData += pointsList
+
+    if numGeom>0:
+        plotGeomInfo = [numGeom]
+        plotGeomInfo += GeomTypesData
+    else:
+        print("Error in create field plot: At least one 3D model must be used.")
+        return
+
+    oFieldsReporter = get_module(oDesign, 'FieldsReporter')
+    # There are tons of more parameters but I do not know how to correctly
+    # handled them, and HFSS accepts this function with only the following
+    # parameters. So, for the moment, these are the options that can be modified
+    plotParameters = ["NAME:"+quantityName+'1',
+                      "SolutionName:=", f"{setupName} : {solutionType}",
+                      "QuantityName:=", quantityName,
+                      "PlotFolder:=", plotFolder,
+                      "IntrinsicVar:=", intrinsicVar,
+                      "PlotGeomInfo:=", plotGeomInfo,
+                      "FilterBoxes:=", [0]]
+    print(plotParameters)
+    oFieldsReporter.CreateFieldPlot(plotParameters, "Field")
+
 
 
 if __name__ == "__main__":
