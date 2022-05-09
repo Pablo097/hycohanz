@@ -347,7 +347,6 @@ def create_field_plot(oDesign,
                       "IntrinsicVar:=", intrinsicVar,
                       "PlotGeomInfo:=", plotGeomInfo,
                       "FilterBoxes:=", [0]]
-    print(plotParameters)
     oFieldsReporter.CreateFieldPlot(plotParameters, "Field")
 
 
