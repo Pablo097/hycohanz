@@ -192,7 +192,7 @@ def assign_waveport(oDesign,
         Integration line origin coordinates (x, y, z) for each mode
         which needs them. If the number of 3-coordinates lists are less than
         Nmodes, the rest of the modes will be excited without integration lines
-    stopCoordsList : list of floats or hycohanz Expression objects
+    stopCoordsList : list of list of floats or hycohanz Expression objects
         Integration line end coordinates (x, y, z) for each mode
         which needs them, as with startCoordList
     Impedance : int
@@ -386,3 +386,90 @@ def assign_lumpedport(oDesign,
                      "Impedance:=", PortImpedance]
 
     oBoundarySetupModule.AssignLumpedPort(lumpedportarray)
+
+@conf.checkDefaultDesign
+def assign_current(oDesign,
+                   objectsList,
+                   startCoordsList,
+                   endCoordsList,
+                   name="Current1"):
+    """
+    Assign a current excitation.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design to which this function is applied.
+    objectsList : list of strings
+        List of the object names to which to apply the current excitation.
+    startCoordsList : list of floats or hycohanz Expression objects
+        Current line origin coordinates (x, y, z).
+    endCoordsList : list of floats or hycohanz Expression objects
+        Current line end coordinates (x, y, z).
+    name : string
+        Name of the current excitation to assign.
+
+    Returns
+    -------
+    None
+    """
+    startCoords = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoordsList]
+    endCoords = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in endCoordsList]
+
+    directionArray = ["NAME:Direction",
+                      "Start:=", startCoords,
+                      "End:=", endCoords]
+    paramArray = ["NAME:"+name,
+		          "Objects:=", objectsList,
+		          directionArray]
+
+    oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
+    oBoundarySetupModule.AssignCurrent(paramArray)
+
+@conf.checkDefaultDesign
+def create_PML(oDesign,
+                PMLObjectId,
+                BaseObjectId,
+                Thickness = "1mm",
+                CreateJoiningObjs = False,
+                Orientation="XAxis",
+                UseFreq = True,
+                MinFreq = "1GHz",
+                MinBeta = 20,
+                RadDist = "55.5865182541667mm"):
+    """
+    Create a PML (Perfectly Matched Load) boundary on the given object.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design to which this function is applied.
+    PMLObjectId : int
+        The ID of the object in which to create the PML. The object name must
+        start with "PML", otherwise, its name will be automatically changed to
+        include that prefix.
+    BaseObjectId : int
+        The ID of the object touching the PML object.
+    Thickness : string or hycohanz Expression
+        Thickness of the PML.
+    Orientation : string
+        Orientation of the PML. Can be "XAxis", "YAxis" or "ZAxis".
+    Returns
+    -------
+    None
+    """
+    oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
+    arg = ["NAME:PMLCreationSettings",
+    		"UserDrawnGroup:=", True,
+    		"PMLFaces:=", [],
+    		"Thickness:=", Ex(Thickness).expr,
+    		"CreateJoiningObjs:=", CreateJoiningObjs,
+    		"PMLObj:=", PMLObjectId,
+    		"BaseObj:=", BaseObjectId,
+    		"Orientation:=", Orientation,
+    		"UseFreq:=", UseFreq,
+    		"MinFreq:=", Ex(MinFreq).expr,
+    		"MinBeta:=", MinBeta,
+    		"RadDist:=", Ex(RadDist).expr]
+
+    oBoundarySetupModule.CreatePML(arg)
