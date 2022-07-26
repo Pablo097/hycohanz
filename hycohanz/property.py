@@ -85,7 +85,7 @@ def add_property(oDesign, name, value):
         proptabarray = ["NAME:LocalVariableTab", propserversarray, newpropsarray]
         oDesign.ChangeProperty(["NAME:AllTabs", proptabarray])
 
-    # For local variables
+    # For global variables
     if project_varname_list:
         propserversarray = ["NAME:PropServers", "ProjectVariables"]
         newpropsarray = ["NAME:NewProps"]

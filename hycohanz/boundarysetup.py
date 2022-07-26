@@ -473,3 +473,118 @@ def create_PML(oDesign,
     		"RadDist:=", Ex(RadDist).expr]
 
     oBoundarySetupModule.CreatePML(arg)
+
+@conf.checkDefaultDesign
+def assign_primary(oDesign,
+                    faceidlist,
+                    startCoord,
+                    stopCoord,
+                    boundaryName="Primary1",
+                    reverseV=False):
+    """
+    Assign a primary periodic condition.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design to which this function is applied.
+    faceidlist : list
+        List of face id integers.
+    startCoord : list of floats or hycohanz Expression objects
+        Origin coordinates (x, y, z) of the periodicity vector U
+    stopCoord : list of floats or hycohanz Expression objects
+        End coordinates (x, y, z) of the periodicity vector U
+    boundaryName : str
+        Name of the bondary to create.
+    reverseV: boolean
+        Whether to reverse the direcion of the V vector perpendicular to U
+
+    Returns
+    -------
+    None
+    """
+    startCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoord]
+    stopCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in stopCoord]
+
+    oModule = get_module(oDesign, "BoundarySetup")
+    coordSysArray = ["NAME:CoordSysVector",
+                     "Origin:=", startCoord,
+                     "UPos:=", stopCoord]
+    primaryBondArray = ["NAME:" + boundaryName,
+		                "Faces:=", faceidlist,
+                        coordSysArray,
+                        "ReverseV:=", reverseV]
+
+    oModule.AssignPrimary(primaryBondArray)
+
+@conf.checkDefaultDesign
+def assign_secondary(oDesign,
+                    faceidlist,
+                    startCoord,
+                    stopCoord,
+                    primaryName,
+                    boundaryName="Secondary1",
+                    reverseV=False,
+                    phi=None,
+                    theta=None,
+                    phase=None):
+    """
+    Assign a secondary periodic condition linked to a existing primary one.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design to which this function is applied.
+    faceidlist : list
+        List of face id integers.
+    startCoord : list of floats or hycohanz Expression objects
+        Origin coordinates (x, y, z) of the periodicity vector U
+    stopCoord : list of floats or hycohanz Expression objects
+        End coordinates (x, y, z) of the periodicity vector U
+    primaryName : str
+        Name of the primary periodic condition to link this secondary one
+    boundaryName : str
+        Name of the bondary to create.
+    phi, theta, phase : float (in deg) or hycohanz Expression
+        Scan angles (phi, theta) or Input Phase Delay (phase). Only one of
+        the two can be used.
+    reverseV: boolean
+        Whether to reverse the direcion of the V vector perpendicular to U
+
+    Returns
+    -------
+    None
+    """
+    startCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoord]
+    stopCoord = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in stopCoord]
+
+    if phi is not None:
+        if type(phi)==int or type(phi)==float:
+            phi = f"{phi}deg"
+        if type(theta)==int or type(theta)==float:
+            theta = f"{theta}deg"
+        anglesArray = ["UseScanAngles:=", True,
+                       "Phi:=", Ex(phi).expr,
+                       "Theta:=", Ex(theta).expr]
+    elif phase is not None:
+        if type(phase)==int or type(phase)==float:
+            phase = f"{phase}deg"
+        anglesArray = ["UseScanAngles:=", False,
+                       "Phase:=", Ex(phase).expr]
+    else:
+        anglesArray = ["UseScanAngles:=", True,
+                       "Phi:=", "0deg",
+                       "Theta:=", "0deg"]
+
+    oModule = get_module(oDesign, "BoundarySetup")
+    coordSysArray = ["NAME:CoordSysVector",
+                     "Origin:=", startCoord,
+                     "UPos:=", stopCoord]
+    secondaryBondArray = ["NAME:" + boundaryName,
+		                "Faces:=", faceidlist,
+                        coordSysArray,
+                        "ReverseV:=", reverseV,
+                        "Primary:=", primaryName]
+    secondaryBondArray += anglesArray
+
+    oModule.AssignSecondary(secondaryBondArray)
