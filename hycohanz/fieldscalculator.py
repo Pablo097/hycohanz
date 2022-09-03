@@ -226,7 +226,7 @@ def export_on_grid(oDesign,
         Frequency at which to evaluate the calculator expression.
     phase : float
         Phase in degrees at which to evaluate the calculator expression.
-    variablesdict : dict
+    variablesDict : dict
         Dictionary listing the variables and their values that define the
         design variation, except for 'Freq' and 'Phase'.  Variable names are the keys (strings), and the values are
         the values of the variable (floats). For example: {'radius': 0.5, 'height': '2.0'}
@@ -250,8 +250,8 @@ def export_on_grid(oDesign,
     offsetCoord = [Ex(coord).expr for coord in offsetCoord]
 
     variablesarray = ["Freq:=", str(freq) + 'Hz', "Phase:=", str(phase) + 'deg']
-    for key in variablesdict:
-        variablesarray += [str(key) + ':=', str(variablesdict[key])]
+    for key in variablesDict:
+        variablesarray += [str(key) + ':=', str(variablesDict[key])]
 
     oFieldsReporter = get_module(oDesign, 'FieldsReporter')
     oFieldsReporter.ExportOnGrid(filename, startCoord, stopCoord, step,
