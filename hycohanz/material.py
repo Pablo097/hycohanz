@@ -19,7 +19,7 @@ warnings.simplefilter('default')
 def add_material(oProject,
                 material_name,
                 rel_permittivity=1,
-                rel_permeability =1,
+                rel_permeability=1,
                 cond=0,
                 diel_loss_tan=0,
                 mag_loss_tan=0,
@@ -29,6 +29,8 @@ def add_material(oProject,
                 ):
     """
     Add Material.
+    This function admits 3-item lists for each of the material characteristics,
+    meaning that characteristic is anisotropic with each of the 3 values for x,y,z
 
     Parameters
     ----------
@@ -36,11 +38,11 @@ def add_material(oProject,
         HFSS Project object.
     material_name : str
         Name of the added material.
-    rel_permittivity : float or hycohanz Expression
-    rel_permeability : float or hycohanz Expression
-    cond : float or hycohanz Expression
-    diel_loss_tan : float or hycohanz Expression
-    mag_loss_tan : float or hycohanz Expression
+    rel_permittivity : float or hycohanz Expression (or list of 3 if anisotropic)
+    rel_permeability : float or hycohanz Expression (or list of 3 if anisotropic)
+    cond : float or hycohanz Expression (or list of 3 if anisotropic)
+    diel_loss_tan : float or hycohanz Expression (or list of 3 if anisotropic)
+    mag_loss_tan : float or hycohanz Expression (or list of 3 if anisotropic)
     mag_saturation : float or hycohanz Expression
     lande_g : float or hycohanz Expression
     delta_h : float or hycohanz Expression
@@ -52,27 +54,35 @@ def add_material(oProject,
     Returns
     -------
     None
-
-    #### This function could be improved by admitting 3-item lists for
-    #### each of the material characteristics, assuming these would mean
-    #### that characteristic is anisotropic with each of the 3 values for x,y,z
     """
     if does_material_exist(oProject,material_name):
         msg = material_name + " already exists in the local library. No material was created"
         warnings.warn(msg)
         return msg
-    else:
-        mat_param = ["NAME:"+material_name,
-                    "permittivity:=", Ex(rel_permittivity).expr,
-                    "permeability:=", Ex(rel_permeability).expr,
-                    "conductivity:=", Ex(cond).expr,
-                    "dielectric_loss_tangent:=", Ex(diel_loss_tan).expr,
-                    "magnetic_loss_tangent:=", Ex(mag_loss_tan).expr,
-                    "saturation_mag:=", Ex(mag_saturation).expr,
-                    "lande_g_factor:=", Ex(lande_g).expr,
-                    "delta_H:=", Ex(delta_h).expr]
-        oDefinitionManager = oProject.GetDefinitionManager()
-        return oDefinitionManager.AddMaterial(mat_param)
+
+    propertyList = [rel_permittivity, rel_permeability, cond, diel_loss_tan, mag_loss_tan]
+    propertyNames = ["permittivity", "permeability", "conductivity",
+                     "dielectric_loss_tangent", "magnetic_loss_tangent"]
+
+    mat_param = ["NAME:"+material_name]
+
+    for i in range(5):
+        if type(propertyList[i])==list and len(propertyList[i])==3:
+            mat_param.append(["NAME:"+propertyNames[i],
+                              "property_type:=", "AnisoProperty",
+    			              "unit:=", "",
+                              "component1:=", Ex(propertyList[i][0]).expr,
+    			              "component2:=", Ex(propertyList[i][1]).expr,
+    			              "component3:=", Ex(propertyList[i][2]).expr])
+        else:
+            mat_param += [propertyNames[i]+":=", Ex(propertyList[i]).expr]
+
+    mat_param += ["saturation_mag:=", Ex(mag_saturation).expr,
+                  "lande_g_factor:=", Ex(lande_g).expr,
+                  "delta_H:=", Ex(delta_h).expr]
+
+    oDefinitionManager = oProject.GetDefinitionManager()
+    return oDefinitionManager.AddMaterial(mat_param)
 
 @conf.checkDefaultProject
 def does_material_exist(oProject,material_name):
