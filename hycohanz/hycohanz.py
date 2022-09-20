@@ -89,7 +89,8 @@ from hycohanz.boundarysetup import (assign_perfect_e,
                                     assign_current,
                                     create_PML,
                                     assign_primary,
-                                    assign_secondary)
+                                    assign_secondary,
+                                    assign_floquetport)
 
 from hycohanz.fieldscalculator import (enter_vol,
                                        calc_op,

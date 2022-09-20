@@ -588,3 +588,115 @@ def assign_secondary(oDesign,
     secondaryBondArray += anglesArray
 
     oModule.AssignSecondary(secondaryBondArray)
+
+@conf.checkDefaultDesign
+def assign_floquetport(oDesign,
+                      faceidlist,
+                      portname="FP1",
+                      Nmodes=2,
+                      startCoordsA=[],
+                      endCoordsA=[],
+                      startCoordsB=[],
+                      endCoordsB=[],
+                      RenormalizeAllTerminals=True,
+                      DeembedDistance=0,
+                      ModesList = [{'IndexM':0, 'IndexN':0,
+                                    'Polarization':'TE',
+                                    'Attenuation':0,
+                                    'AffectsRefinement':True},
+                                   {'IndexM':0, 'IndexN':0,
+                                    'Polarization':'TM',
+                                    'Attenuation':0,
+                                    'AffectsRefinement':True}],
+                      ShowReporterFilter=False,
+                      UseIntLine=False,
+                      CharImp="Zpi",
+                      UseScanAngles=True,
+                      Phi=0,
+                      Theta=0):
+    """
+    Assign a Floquet Port excitation. Several modes can be defined, each with
+    its corresponding configuration dictionary.
+
+    Parameters
+    ----------
+    oDesign : pywin32 COMObject
+        The HFSS design to which this function is applied.
+    faceidlist : list
+        List of face id integers.
+    portname : str
+        Name of the port to create.
+    Nmodes : int
+        Number of modes with which to excite the port.
+    startCoordsA : list of floats or hycohanz Expression objects
+    endCoordsA : list of floats or hycohanz Expression objects
+    startCoordsB : list of floats or hycohanz Expression objects
+    endCoordsB : list of floats or hycohanz Expression objects
+        Integration line origin and end coordinates (x, y, z) for lattice
+        vector A and B, which define the periodic lattice geometry.
+    DeembedDistance : floats or hycohanz Expression
+        Distance for deembeding the port.
+    ModesList : list of dict
+        List with dictionaries of the properties of each mode
+
+    Returns
+    -------
+    None
+    """
+    if DeembedDistance == 0:
+        DoDeembed = False
+    else:
+        DoDeembed = True
+
+    # Obtain coordinates and their values
+    startCoordsA = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoordsA]
+    endCoordsA = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in endCoordsA]
+    startCoordsB = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in startCoordsB]
+    endCoordsB = [str(eval_expression(oDesign, aux)*1e3)+'mm' for aux in endCoordsB]
+
+    if ((type(ModesList) == list and Nmodes != len(ModesList)) or
+        (type(ModesList) == dict and Nmodes != 1)):
+        print("Error in assign_floquetport: 'ModesList' must have Nmodes dictionaries.\n")
+        return
+
+    modesListArray = ["NAME:ModesList"]
+    modesarray = ["NAME:Modes"]
+    for n in range(0, Nmodes):
+        modesarray.append(["NAME:Mode" + str(n + 1),
+                            "ModeNum:=", n + 1,
+                            "UseIntLine:=", UseIntLine,
+                            "CharImp:=", CharImp])
+        modesListArray.append(["NAME:Mode",
+                               "ModeNumber:=", n + 1,
+                               "IndexM:=", ModesList[n]['IndexM'],
+                               "IndexN:=", ModesList[n]['IndexN'],
+                               "Attenuation:=", ModesList[n]['Attenuation'],
+                               "PolarizationState:=", ModesList[n]['Polarization'],
+                               "AffectsRefinement:=", ModesList[n]['AffectsRefinement']])
+
+    latticeAarray = ["NAME:LatticeAVector",
+			         "Coordinate System:=", "Global",
+			         "Start:=", startCoordsA,
+                     "End:=", endCoordsA]
+    latticeBarray = ["NAME:LatticeBVector",
+			         "Coordinate System:=", "Global",
+			         "Start:=", startCoordsB,
+                     "End:=", endCoordsB]
+
+    floquetportarray = ["NAME:" + portname,
+                         "Faces:=", faceidlist,
+                         "NumModes:=", Nmodes,
+                         "RenormalizeAllTerminals:=", RenormalizeAllTerminals,
+                         "DoDeembed:=", DoDeembed,
+                         "DeembedDist:=", Ex(DeembedDistance).expr,
+                         modesarray,
+                         "ShowReporterFilter:=", ShowReporterFilter,
+                         "UseScanAngles:=", UseScanAngles,
+                         "Phi:=", Ex(Phi).expr+"deg",
+                         "Theta:=", Ex(Theta).expr+"deg",
+                         latticeAarray,
+                         latticeBarray,
+                         modesListArray]
+
+    oBoundarySetupModule = get_module(oDesign, "BoundarySetup")
+    oBoundarySetupModule.AssignFloquetPort(floquetportarray)
