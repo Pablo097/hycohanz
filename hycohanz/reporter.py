@@ -231,6 +231,7 @@ def change_report_properties(oDesign,
         For example: 'General', 'AxisX' or 'PolarGrid'
     props_dict : Dictionary
         Dictionary with the property names and their values.
+        If the property is 'Color', a 3 RGB integer values list must be passed along.
         For example: {'Min Scale': "-20",
                       'Max Scale': "20",
                       'Spacing': "10",
@@ -243,8 +244,14 @@ def change_report_properties(oDesign,
 
     changedProps_array = ["NAME:ChangedProps"]
     for key in props_dict:
-        changedProps_array.append(['NAME:'+str(key),
-                                   'Value:=', str(props_dict[key])])
+        prop_list = ['NAME:'+str(key)]
+        if str(key)=='Color':
+            prop_list += ['R:=', props_dict[key][0],
+                          'G:=', props_dict[key][1],
+                          'B:=', props_dict[key][2]]
+        else:
+            prop_list += ['Value:=', str(props_dict[key])]
+        changedProps_array.append(prop_list)
 
     properties_array = ["NAME:AllTabs",
                         ["NAME:"+tab_name,

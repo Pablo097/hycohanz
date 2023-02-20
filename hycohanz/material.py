@@ -105,4 +105,4 @@ def does_material_exist(oProject,material_name):
 
     """
     oDefinitionManager = oProject.GetDefinitionManager()
-    return oDefinitionManager.DoesMaterialExist(material_name)
+    return True if oDefinitionManager.DoesMaterialExist(material_name) else False
