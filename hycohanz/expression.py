@@ -41,6 +41,26 @@ class Expression(object):
         else:
             self.expr = str(expr)
 
+    def __and__(self, y):
+        """
+        Overloads the AND (&) operator.
+        It concatenates the self Expression string with the string version of 'y'.
+        """
+        if isinstance(y, Expression):
+            return Expression(self.expr + str(y.expr))
+        else:
+            return Expression(self.expr + str(y))
+
+    def __rand__(self, y):
+        """
+        Overloads the reverse AND (&) operator.
+        It concatenates the string version of 'y' with the self Expression string.
+        """
+        if isinstance(y, Expression):
+            return Expression(str(y.expr) + self.expr)
+        else:
+            return Expression(str(y) + self.expr)
+
     def __add__(self, y):
         """
         Overloads the addition (+) operator.
