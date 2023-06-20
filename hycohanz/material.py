@@ -12,6 +12,7 @@ import warnings
 import hycohanz.conf as conf
 from hycohanz.expression import Expression as Ex
 from hycohanz.desktop import get_active_project
+from hycohanz.modeler3d import conductors_list
 
 warnings.simplefilter('default')
 
@@ -104,5 +105,8 @@ def does_material_exist(oProject,material_name):
     >>>
 
     """
+    if material_name in conductors_list+['vacuum']:
+        return True
+
     oDefinitionManager = oProject.GetDefinitionManager()
     return True if oDefinitionManager.DoesMaterialExist(material_name) else False

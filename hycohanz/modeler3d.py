@@ -26,7 +26,7 @@ warnings.simplefilter('default')
 # be updated whenever more conductors are needed.
 # Indeed, this list is also visible from outside in order to let the user
 # modify it from the executable scripts.
-conductors_list = ['pec', 'copper', 'silver', 'gold']
+conductors_list = ['pec', 'copper', 'silver', 'gold', 'aluminum']
 
 @conf.checkDefaultEditor
 def get_matched_object_name(oEditor, name_filter="*"):

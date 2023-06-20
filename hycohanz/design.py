@@ -8,6 +8,7 @@ At last count there were 5 functions implemented out of 27.
 from __future__ import division, print_function, unicode_literals, absolute_import
 
 import hycohanz.conf as conf
+from hycohanz.expression import Expression
 
 @conf.checkDefaultDesign
 def get_module(oDesign, ModuleName):
@@ -74,18 +75,23 @@ def create_open_region(oDesign, frequency, Boundary="Radiation", ApplyInfiniteGP
     ----------
     oDesign : pywin32 COMObject
         The HFSS design object upon which to operate.
-    frequency : float or int
+    frequency : float or int or hycohanz Expression
         Frequency in Hz
+    Boundary : string
+        'Radiation', 'FEBI' or 'PML'
 
     Returns
     -------
     None
     """
+    if not Expression(frequency).expr[-2:] == 'Hz':
+        frequency = Expression(frequency).expr + 'Hz'
+
     oModule = get_module(oDesign, "ModelSetup")
     oModule.CreateOpenRegion(
 		[
 			"NAME:Settings",
-			"OpFreq:="      , str(frequency)+"Hz",
+			"OpFreq:="      , frequency,
 			"Boundary:="        , Boundary,
 			"ApplyInfiniteGP:=" , ApplyInfiniteGP
 		])

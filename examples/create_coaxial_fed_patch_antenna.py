@@ -164,10 +164,10 @@ waveport_face_id = hfss.get_face_by_position("CoaxialInterior",
 
 ## Create the Lumped Port excitation with an integration line from the coaxial
 ## inner layer to the outer one.
-hfss.assign_lumpedport_intline([waveport_face_id],
+hfss.assign_lumpedport([waveport_face_id],
 					[0, -FedDealignment-innerCoaxRadius, -LengthCoax],
 					[0, -FedDealignment-OuterCoaxRadius, -LengthCoax],
-					Impedance=str(Z0)+"ohm", portname="CoaxialWaveport")
+					PortImpedance=str(Z0)+"ohm", portname="CoaxialWaveport")
 # As can be notices, 'FedDealignment' and 'LengthCoax' are expressions, and HFSS
 # doesn´t let the start and end coordinates of the port integration lines to be
 # expressions in normal circunstances. Luckily, the hycohanz library takes care
