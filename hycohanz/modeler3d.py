@@ -52,6 +52,35 @@ def get_matched_object_name(oEditor, name_filter="*"):
     return list(selections)
 
 @conf.checkDefaultEditor
+def get_body_names_by_position(oEditor, x, y, z):
+    """
+    Returns the names of objects that contact a specified point.
+
+    Parameters
+    ----------
+    oEditor : pywin32 COMObject
+        The HFSS editor in which the operation will be performed.
+    x : float or hycohanz Expression object
+        x position in Cartesian coordinates.
+    y : float or hycohanz Expression object
+        y position in Cartesian coordinates.
+    z : float or hycohanz Expression object
+        z position in Cartesian coordinates.
+
+    Returns
+    -------
+    body_list : list of str
+    """
+    attributesarray = ["NAME:Parameters",
+                       "XPosition:=", Ex(x).expr,
+                       "YPosition:=", Ex(y).expr,
+                       "ZPosition:=", Ex(z).expr]
+                       
+    body_list = oEditor.GetBodyNamesByPosition(attributesarray)
+
+    return body_list
+
+@conf.checkDefaultEditor
 def assign_material(oEditor, partlist, MaterialName='vacuum', SolveInside=None):
     """
     Assign a material to the specified objects. Only the MaterialName and

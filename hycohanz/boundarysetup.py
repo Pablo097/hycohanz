@@ -586,7 +586,7 @@ def assign_secondary(oDesign,
                         "ReverseV:=", reverseV,
                         "Primary:=", primaryName]
     secondaryBondArray += anglesArray
-
+    
     oModule.AssignSecondary(secondaryBondArray)
 
 @conf.checkDefaultDesign
